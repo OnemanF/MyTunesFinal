@@ -10,54 +10,73 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" prefHeight="735.0" prefWidth="930.0" spacing="20.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/22" fx:controller="dk.easv.mytunes.mytunesfinal.MyTunesController">
-    <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-    </padding>
+<VBox alignment="CENTER" prefHeight="735.0" prefWidth="930.0" spacing="20.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.mytunes.mytunesfinal.MyTunesController">
+   <padding>
+      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+   </padding>
    <children>
-      <AnchorPane prefHeight="691.0" prefWidth="881.0">
+      <AnchorPane prefHeight="691.0" prefWidth="881.0" style="-fx-background-color: #c2e3f3;">
          <children>
-            <Button layoutX="14.0" layoutY="34.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="52.0" text="⏮" />
-            <Button layoutX="79.0" layoutY="34.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="33.0" text="▶" />
-            <Button layoutX="165.0" layoutY="34.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="52.0" text="⏭" />
+            <Button layoutX="20.0" layoutY="34.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="52.0" style="-fx-background-color: #69b9e2;" text="⏮" />
+            <Button layoutX="79.0" layoutY="34.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="33.0" style="-fx-background-color: #69b9e2;" text="▶" />
+            <Button layoutX="164.0" layoutY="34.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="52.0" style="-fx-background-color: #69b9e2;" text="⏭">
+               <font>
+                  <Font size="13.0" />
+               </font></Button>
             <Slider layoutX="50.0" layoutY="80.0" />
-            <Label layoutX="367.0" layoutY="38.0" text="CurrentTrack" />
+            <Label layoutX="240.0" layoutY="40.0" text="Current Track:">
+               <font>
+                  <Font name="Dutch 801 Extra Bold BT" size="15.0" />
+               </font></Label>
             <TextField layoutX="687.0" layoutY="21.0" prefHeight="26.0" prefWidth="121.0" />
             <Button layoutX="822.0" layoutY="21.0" mnemonicParsing="false" text="Ɑ͞ ̶͞ ̶͞ ̶͞ لں͞" />
             <Label layoutX="644.0" layoutY="25.0" text="Filter:" />
-            <TableView layoutX="20.0" layoutY="148.0" prefHeight="478.0" prefWidth="230.0">
-              <columns>
-                <TableColumn prefWidth="75.0" text="Name" />
-                <TableColumn prefWidth="75.0" text="Songs" />
-                  <TableColumn prefWidth="75.0" text="Duration" />
-              </columns>
-            </TableView>
-            <ListView layoutX="320.0" layoutY="148.0" prefHeight="478.0" prefWidth="188.0" />
-            <TableView layoutX="578.0" layoutY="148.0" prefHeight="478.0" prefWidth="305.0">
+            <TableView layoutX="20.0" layoutY="148.0" prefHeight="478.0" prefWidth="230.0" style="-fx-background-color: #a3d8f3;">
                <columns>
-                  <TableColumn prefWidth="75.0" text="Title" />
-                  <TableColumn prefWidth="75.0" text="List" />
-                  <TableColumn prefWidth="75.0" text="Category" />
-                  <TableColumn prefWidth="75.0" text="Duration" />
+                  <TableColumn prefWidth="75.0" style="-fx-background-color: #69b9e2;" text="Name" />
+                  <TableColumn prefWidth="75.0" style="-fx-background-color: #69b9e2;" text="Songs" />
+                  <TableColumn prefWidth="79.19998779296876" style="-fx-background-color: #69b9e2;" text="Duration" />
                </columns>
             </TableView>
-            <Label layoutX="25.0" layoutY="121.0" text="Playlists" />
-            <Button layoutX="529.0" layoutY="148.0" mnemonicParsing="false" text="⮜" />
-            <Button layoutX="320.0" layoutY="640.0" mnemonicParsing="false" text="▲" />
-            <Button layoutX="367.0" layoutY="640.0" mnemonicParsing="false" text="▼" />
-            <Button layoutX="119.0" layoutY="34.0" mnemonicParsing="false" text="▐▐" />
-            <Button layoutX="457.0" layoutY="640.0" mnemonicParsing="false" text="Delete" />
-            <Button layoutX="578.0" layoutY="640.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="50.0" text="New" />
-            <Button layoutX="644.0" layoutY="640.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="50.0" text="Edit" />
-            <Button layoutX="705.0" layoutY="640.0" mnemonicParsing="false" text="Delete" />
-            <Button layoutX="833.0" layoutY="637.0" mnemonicParsing="false" text="Delete" />
-            <Button layoutX="25.0" layoutY="639.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="50.0" text="New" />
-            <Button layoutX="87.0" layoutY="640.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="50.0" text="Edit" />
-            <Button layoutX="152.0" layoutY="640.0" mnemonicParsing="false" text="Delete" />
+            <ListView layoutX="320.0" layoutY="148.0" prefHeight="478.0" prefWidth="188.0" style="-fx-background-color: #a3d8f3;" />
+            <TableView layoutX="578.0" layoutY="148.0" prefHeight="478.0" prefWidth="305.0" style="-fx-background-color: #a3d8f3;">
+               <columns>
+                  <TableColumn prefWidth="75.0" style="-fx-background-color: #69b9e2;" text="Title" />
+                  <TableColumn prefWidth="75.0" style="-fx-background-color: #69b9e2;" text="List" />
+                  <TableColumn prefWidth="75.0" style="-fx-background-color: #69b9e2;" text="Category" />
+                  <TableColumn prefWidth="79.19997558593752" style="-fx-background-color: #69b9e2;" text="Duration" />
+               </columns>
+            </TableView>
+            <Label layoutX="25.0" layoutY="121.0" text="Playlists">
+               <font>
+                  <Font name="System Bold" size="16.0" />
+               </font></Label>
+            <Button layoutX="530.0" layoutY="174.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="34.0" style="-fx-background-color: #69b9e2;" text="⮜" />
+            <Button layoutX="320.0" layoutY="640.0" mnemonicParsing="false" style="-fx-background-color: #69b9e2;" text="▲" />
+            <Button layoutX="367.0" layoutY="640.0" mnemonicParsing="false" style="-fx-background-color: #69b9e2;" text="▼" />
+            <Button layoutX="121.0" layoutY="34.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="34.0" style="-fx-background-color: #69b9e2;" text="⏸">
+               <font>
+                  <Font size="13.0" />
+               </font></Button>
+            <Button layoutX="457.0" layoutY="640.0" mnemonicParsing="false" style="-fx-background-color: #69b9e2;" text="Delete" />
+            <Button layoutX="578.0" layoutY="640.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="50.0" style="-fx-background-color: #69b9e2;" text="New" />
+            <Button layoutX="644.0" layoutY="640.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="50.0" style="-fx-background-color: #69b9e2;" text="Edit" />
+            <Button layoutX="705.0" layoutY="640.0" mnemonicParsing="false" style="-fx-background-color: #69b9e2;" text="Delete" />
+            <Button layoutX="839.0" layoutY="639.0" mnemonicParsing="false" style="-fx-background-color: #69b9e2;" text="Close" />
+            <Button layoutX="25.0" layoutY="639.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="50.0" style="-fx-background-color: #69b9e2;" text="New" />
+            <Button layoutX="87.0" layoutY="640.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="50.0" style="-fx-background-color: #69b9e2;" text="Edit" />
+            <Button layoutX="152.0" layoutY="640.0" mnemonicParsing="false" style="-fx-background-color: #69b9e2;" text="Delete" />
             <Label layoutX="202.0" layoutY="78.0" text="🕪" />
-            <Label layoutX="325.0" layoutY="121.0" text="Songs on playlist" />
-            <Label layoutX="578.0" layoutY="121.0" text="Songs" />
+            <Label layoutX="316.0" layoutY="121.0" text="Songs on playlist">
+               <font>
+                  <Font name="System Bold" size="16.0" />
+               </font></Label>
+            <Label layoutX="578.0" layoutY="121.0" text="Songs">
+               <font>
+                  <Font name="System Bold" size="16.0" />
+               </font></Label>
          </children>
       </AnchorPane>
    </children>
