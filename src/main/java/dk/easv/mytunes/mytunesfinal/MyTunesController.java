@@ -3,7 +3,7 @@ package dk.easv.mytunes.mytunesfinal;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 
-public class HelloController {
+public class MyTunesController {
     @FXML
     private Label welcomeText;
 
