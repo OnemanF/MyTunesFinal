@@ -1,6 +1,7 @@
-package dk.easv.mytunes.mytunesfinal.db;
+package dk.easv.mytunes.mytunesfinal.DAO.db;
 
 import dk.easv.mytunes.mytunesfinal.BE.Song;
+import dk.easv.mytunes.mytunesfinal.DAO.ISongDataAccess;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -53,5 +54,20 @@ public class SongDAO_DB implements ISongDataAccess {
             ex.printStackTrace();
             throw new Exception("Could not get movies from database", ex);
         }
+    }
+
+    @Override
+    public Song addSong(Song newSong) throws Exception {
+        return null;
+    }
+
+    @Override
+    public void editSong(Song song) throws Exception {
+
+    }
+
+    @Override
+    public void deleteSong(Song song) throws Exception {
+
     }
 }
