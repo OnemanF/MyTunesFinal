@@ -60,7 +60,7 @@ public class MyTunesController implements Initializable{
     public void initialize(URL location, ResourceBundle resources) {
 
         setupTableViews();
-        onBtnSearch();
+
 
 
     }
@@ -73,9 +73,6 @@ public class MyTunesController implements Initializable{
        // colDuration.setCellValueFactory(new PropertyValueFactory<>("Duration"));
 
         tblSongs.setItems(songModel.getObservableSongs());
-    }
-
-    private void onBtnSearch(){
 
         txtSongSearch.textProperty().addListener((observableValue, oldValue, newValue) -> {
             try {
@@ -85,7 +82,8 @@ public class MyTunesController implements Initializable{
                 e.printStackTrace();
             }
         });
-
     }
+
+
 
 }
