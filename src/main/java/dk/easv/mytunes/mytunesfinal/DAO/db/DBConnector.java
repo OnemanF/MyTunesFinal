@@ -1,4 +1,4 @@
-package dk.easv.mytunes.mytunesfinal.db;
+package dk.easv.mytunes.mytunesfinal.DAO.db;
 
 //db import
 
