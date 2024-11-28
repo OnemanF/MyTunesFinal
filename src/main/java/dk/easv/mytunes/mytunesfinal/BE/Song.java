@@ -10,7 +10,7 @@ public class Song {
     private String FilePath;
 
 
-    public Song(int duration, String filePath, String artist, String title, int id, String genre) {
+    public Song(int duration, String filePath, String artist, String title, String genre) {
         FilePath = filePath;
         this.artist = artist;
         this.title = title;

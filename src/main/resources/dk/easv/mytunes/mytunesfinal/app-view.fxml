@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" prefHeight="735.0" prefWidth="930.0" spacing="20.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.mytunes.mytunesfinal.MyTunesController">
+<VBox alignment="CENTER" prefHeight="735.0" prefWidth="930.0" spacing="20.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.mytunes.mytunesfinal.GUI.MyTunesController">
    <padding>
       <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
    </padding>
@@ -30,8 +30,8 @@
                <font>
                   <Font name="Dutch 801 Extra Bold BT" size="15.0" />
                </font></Label>
-            <TextField layoutX="687.0" layoutY="21.0" prefHeight="26.0" prefWidth="121.0" />
-            <Button layoutX="822.0" layoutY="21.0" mnemonicParsing="false" text="Ɑ͞ ̶͞ ̶͞ ̶͞ لں͞" />
+            <TextField fx:id="txtSongSearch" layoutX="687.0" layoutY="21.0" prefHeight="26.0" prefWidth="121.0" />
+            <Button fx:id="searchButton" layoutX="822.0" layoutY="21.0" mnemonicParsing="false" onAction="#onBtnSearch" text="Ɑ͞ ̶͞ ̶͞ ̶͞ لں͞" />
             <Label layoutX="644.0" layoutY="25.0" text="Filter:" />
             <TableView layoutX="20.0" layoutY="148.0" prefHeight="478.0" prefWidth="230.0" style="-fx-background-color: #a3d8f3;">
                <columns>
@@ -41,12 +41,12 @@
                </columns>
             </TableView>
             <ListView layoutX="320.0" layoutY="148.0" prefHeight="478.0" prefWidth="188.0" style="-fx-background-color: #a3d8f3;" />
-            <TableView layoutX="578.0" layoutY="148.0" prefHeight="478.0" prefWidth="305.0" style="-fx-background-color: #a3d8f3;">
+            <TableView fx:id="tblSongs" layoutX="578.0" layoutY="148.0" prefHeight="478.0" prefWidth="305.0" style="-fx-background-color: #a3d8f3;">
                <columns>
-                  <TableColumn prefWidth="75.0" style="-fx-background-color: #69b9e2;" text="Title" />
-                  <TableColumn prefWidth="75.0" style="-fx-background-color: #69b9e2;" text="List" />
-                  <TableColumn prefWidth="75.0" style="-fx-background-color: #69b9e2;" text="Category" />
-                  <TableColumn prefWidth="79.19997558593752" style="-fx-background-color: #69b9e2;" text="Duration" />
+                  <TableColumn fx:id="colTitle" prefWidth="75.0" style="-fx-background-color: #69b9e2;" text="Title" />
+                  <TableColumn fx:id="colArtist" prefWidth="75.0" style="-fx-background-color: #69b9e2;" text="Artist" />
+                  <TableColumn fx:id="colGenre" prefWidth="75.0" style="-fx-background-color: #69b9e2;" text="Genre" />
+                  <TableColumn fx:id="colDuration" prefWidth="79.19997558593752" style="-fx-background-color: #69b9e2;" text="Duration" />
                </columns>
             </TableView>
             <Label layoutX="25.0" layoutY="121.0" text="Playlists">
