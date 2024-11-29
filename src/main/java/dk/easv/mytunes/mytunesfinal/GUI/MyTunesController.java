@@ -70,7 +70,8 @@ public class MyTunesController implements Initializable{
         colTitle.setCellValueFactory(new PropertyValueFactory<>("Title"));
         colArtist.setCellValueFactory(new PropertyValueFactory<>("Artist"));
         colGenre.setCellValueFactory(new PropertyValueFactory<>("Genre"));
-       // colDuration.setCellValueFactory(new PropertyValueFactory<>("Duration"));
+        colDuration.setCellValueFactory(new PropertyValueFactory<>("Duration"));
+       
 
         tblSongs.setItems(songModel.getObservableSongs());
 
