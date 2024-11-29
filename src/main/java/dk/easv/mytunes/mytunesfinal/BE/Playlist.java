@@ -6,6 +6,7 @@ public class Playlist {
     private String name;
     private int playlistTotalDuration;
     private int totalSongs;
+    private Integer numberOfSongs;
 
     public Playlist(int id, String name, int playlistTotalDuration, int totalSongs) {
         this.id = id;
@@ -32,6 +33,14 @@ public class Playlist {
 
     public int getPlaylistTotalDuration() {
         return playlistTotalDuration;
+    }
+
+    public Integer getNumberOfSongs() {
+        return numberOfSongs;
+    }
+
+    public void setNumberOfSong(Integer numberOfSongs) {
+        this.numberOfSongs = numberOfSongs;
     }
 
     public void setPlaylistTotalDuration(int playlistTotalDuration) {
