@@ -1,7 +1,11 @@
 package dk.easv.mytunes.mytunesfinal.GUI;
 
+import dk.easv.mytunes.mytunesfinal.BE.Playlist;
 import dk.easv.mytunes.mytunesfinal.BE.Song;
+import dk.easv.mytunes.mytunesfinal.BLL.PlaylistManager;
+import dk.easv.mytunes.mytunesfinal.GUI.Model.PlaylistModel;
 import dk.easv.mytunes.mytunesfinal.GUI.Model.SongModel;
+import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -15,6 +19,8 @@ public class MyTunesController implements Initializable{
     //Table view
     @FXML
     private TableView<Song> tblSongs;
+    @FXML
+    private TableView<Playlist> tblPlaylist;
     //Table columns
     @FXML
     private TableColumn<Song, String> colTitle;
@@ -25,6 +31,12 @@ public class MyTunesController implements Initializable{
     @FXML
     private TableColumn<Song, String> colDuration;
 
+    //playlist table
+    @FXML
+    private TableColumn<Playlist, String> colName, colSongs, colSongsDuration;
+
+
+
     //search field
     @FXML
     private TextField txtSongSearch;
@@ -34,10 +46,17 @@ public class MyTunesController implements Initializable{
     private Button searchButton;
 
     private SongModel songModel;
+    private PlaylistModel playlistModel;
+
+    private PlaylistManager playlistManager;
 
     public MyTunesController() {
 
         try {
+
+            this.playlistModel = new PlaylistModel();
+            playlistManager = new PlaylistManager();
+
 
             songModel = new SongModel();
 
@@ -60,9 +79,17 @@ public class MyTunesController implements Initializable{
     public void initialize(URL location, ResourceBundle resources) {
 
         setupTableViews();
+        loadInPlaylists();
 
 
 
+    }
+
+    // Formats duration from seconds to a mm:ss string format.
+    public String getDurationFormatted(int seconds) {
+        int minutes = seconds / 60;
+        int remainingSeconds = seconds % 60;
+        return String.format("%02d:%02d", minutes, remainingSeconds);
     }
 
     private void setupTableViews(){
@@ -70,8 +97,15 @@ public class MyTunesController implements Initializable{
         colTitle.setCellValueFactory(new PropertyValueFactory<>("Title"));
         colArtist.setCellValueFactory(new PropertyValueFactory<>("Artist"));
         colGenre.setCellValueFactory(new PropertyValueFactory<>("Genre"));
-        colDuration.setCellValueFactory(new PropertyValueFactory<>("Duration"));
-       
+        //colDuration.setCellValueFactory(new PropertyValueFactory<>("Duration"));
+        colDuration.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(getDurationFormatted(cellData.getValue().getDuration())));
+
+
+        tblPlaylist.setItems(playlistModel.getPlaylists());
+        colName.setCellValueFactory(new PropertyValueFactory<>("Name"));
+        colSongs.setCellValueFactory(new PropertyValueFactory<>("totalSongs"));
+        colSongsDuration.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(getDurationFormatted(cellData.getValue().getPlaylistTotalDuration())));
+
 
         tblSongs.setItems(songModel.getObservableSongs());
 
@@ -83,6 +117,12 @@ public class MyTunesController implements Initializable{
                 e.printStackTrace();
             }
         });
+    }
+
+    // Loads playlists into the table view.
+    private void loadInPlaylists() {
+        playlistModel.loadInPlaylists();
+        tblPlaylist.refresh();
     }
 
 
