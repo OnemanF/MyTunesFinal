@@ -6,12 +6,14 @@ import dk.easv.mytunes.mytunesfinal.BLL.PlaylistManager;
 import dk.easv.mytunes.mytunesfinal.GUI.Model.PlaylistModel;
 import dk.easv.mytunes.mytunesfinal.GUI.Model.SongModel;
 import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class MyTunesController implements Initializable{
@@ -42,7 +44,7 @@ public class MyTunesController implements Initializable{
 
     //buttons
     @FXML
-    private Button searchButton;
+    private Button searchButton, btnNewPlaylist;
 
     private SongModel songModel;
     private PlaylistModel playlistModel;
@@ -122,6 +124,21 @@ public class MyTunesController implements Initializable{
     private void loadInPlaylists() {
         playlistModel.loadInPlaylists();
         tblPlaylist.refresh();
+    }
+
+    public void createNewPlaylist(ActionEvent actionEvent) {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Create New Playlist");
+        dialog.setHeaderText("Enter the name of the new playlist:");
+        Optional<String> result = dialog.showAndWait();
+        result.ifPresent(playlistName -> {
+            try {
+                playlistModel.createPlaylist(playlistName);
+                loadInPlaylists(); // Reload or refresh the list
+            } catch (Exception e) {
+                e.printStackTrace(); // Or handle this more gracefully
+            }
+        });
     }
 
 

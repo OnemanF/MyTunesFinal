@@ -8,4 +8,6 @@ public interface IPlaylistDataAccess {
 
 
     List<Playlist> getAllPlaylists() throws Exception;
+
+    Playlist createPlaylist(Playlist playlist) throws Exception;
 }

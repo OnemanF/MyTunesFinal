@@ -32,4 +32,9 @@ public class PlaylistManager {
         return playlistDAO_DB.getSongsForPlaylist(playlistId);
     }
 
+    public Playlist createPlaylist(String name) throws Exception {
+        Playlist newPlaylist = new Playlist(-1,name,0,0);
+        return playlistDAO.createPlaylist(newPlaylist);
+    }
+
 }
