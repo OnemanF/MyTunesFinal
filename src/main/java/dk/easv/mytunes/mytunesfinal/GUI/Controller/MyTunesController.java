@@ -1,4 +1,4 @@
-package dk.easv.mytunes.mytunesfinal.GUI;
+package dk.easv.mytunes.mytunesfinal.GUI.Controller;
 
 import dk.easv.mytunes.mytunesfinal.BE.Playlist;
 import dk.easv.mytunes.mytunesfinal.BE.Song;
@@ -11,7 +11,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
-import java.awt.event.ActionListener;
 import java.net.URL;
 import java.util.ResourceBundle;
 
