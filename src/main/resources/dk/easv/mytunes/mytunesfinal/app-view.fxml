@@ -31,13 +31,13 @@
                   <Font name="Dutch 801 Extra Bold BT" size="15.0" />
                </font></Label>
             <TextField fx:id="txtSongSearch" layoutX="687.0" layoutY="21.0" prefHeight="26.0" prefWidth="121.0" />
-            <Button fx:id="searchButton" layoutX="822.0" layoutY="21.0" mnemonicParsing="false" onAction="#onBtnSearch" text="Ɑ͞ ̶͞ ̶͞ ̶͞ لں͞" />
+            <Button layoutX="822.0" layoutY="21.0" mnemonicParsing="false" text="Ɑ͞ ̶͞ ̶͞ ̶͞ لں͞" />
             <Label layoutX="644.0" layoutY="25.0" text="Filter:" />
-            <TableView layoutX="20.0" layoutY="148.0" prefHeight="478.0" prefWidth="230.0" style="-fx-background-color: #a3d8f3;">
+            <TableView fx:id="tblPlaylist" layoutX="20.0" layoutY="148.0" prefHeight="478.0" prefWidth="230.0" style="-fx-background-color: #a3d8f3;">
                <columns>
-                  <TableColumn prefWidth="75.0" style="-fx-background-color: #69b9e2;" text="Name" />
-                  <TableColumn prefWidth="75.0" style="-fx-background-color: #69b9e2;" text="Songs" />
-                  <TableColumn prefWidth="79.19998779296876" style="-fx-background-color: #69b9e2;" text="Duration" />
+                  <TableColumn fx:id="colName" prefWidth="75.0" style="-fx-background-color: #69b9e2;" text="Name" />
+                  <TableColumn fx:id="colSongs" prefWidth="75.0" style="-fx-background-color: #69b9e2;" text="Songs" />
+                  <TableColumn fx:id="colSongsDuration" prefWidth="79.19998779296876" style="-fx-background-color: #69b9e2;" text="Duration" />
                </columns>
             </TableView>
             <ListView layoutX="320.0" layoutY="148.0" prefHeight="478.0" prefWidth="188.0" style="-fx-background-color: #a3d8f3;" />

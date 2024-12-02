@@ -10,13 +10,15 @@ public class Song {
     private String FilePath;
 
 
-    public Song(int duration, String filePath, String artist, String title, String genre) {
-        FilePath = filePath;
-        this.artist = artist;
-        this.title = title;
+    public Song(int id, String title, String artist, String genre, int duration, String filePath) {
+
         this.id = id;
-        this.duration = duration;
+        this.title = title;
+        this.artist = artist;
         this.genre = genre;
+        this.duration = duration;
+
+        FilePath = filePath;
     }
 
         public String getFilePath () {
