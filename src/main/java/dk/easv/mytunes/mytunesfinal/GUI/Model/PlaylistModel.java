@@ -13,6 +13,8 @@ public class PlaylistModel {
 
     private ObservableList<Playlist> playlist;
     private PlaylistManager playlistManager;
+    private ObservableList<Song> playlistSongs = FXCollections.observableArrayList();
+
 
     public PlaylistModel() throws Exception {
 
@@ -36,6 +38,21 @@ public class PlaylistModel {
             playlist.setNumberOfSong(songCount);
         }
         playlist.setAll(playlistData);
+    }
+
+    public ObservableList<Song> getPlaylistSongs() {
+        return playlistSongs;
+    }
+
+    public void loadSongsForPlaylist(int playlistId) {
+        List<Song> songsListForPlaylist = null;
+        try {
+            songsListForPlaylist = playlistManager.getSongsForPlaylist(playlistId);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        playlistSongs.clear();
+        playlistSongs.addAll(songsListForPlaylist);
     }
 
 
