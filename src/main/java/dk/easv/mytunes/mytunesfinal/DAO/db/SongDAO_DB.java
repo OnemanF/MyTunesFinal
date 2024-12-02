@@ -35,7 +35,7 @@ public class SongDAO_DB implements ISongDataAccess {
             while (rs.next()) {
 
 
-                int id = rs.getInt("ID");
+                int id = rs.getInt("SongID");
                 String title = rs.getString("Title");
                 String artist = rs.getString("Artist");
                 int duration = rs.getInt("Duration");
@@ -70,4 +70,6 @@ public class SongDAO_DB implements ISongDataAccess {
     public void deleteSong(Song song) throws Exception {
 
     }
+
+
 }

@@ -24,9 +24,17 @@ public class PlaylistManager {
     }
 
 
-
-
     public int getSongCountForPlaylist(int playlistId) {
         return playlistDAO_DB.getSongCountForPlaylist(playlistId);
     }
+
+    public List<Song> getSongsForPlaylist(int playlistId) throws Exception {
+        return playlistDAO_DB.getSongsForPlaylist(playlistId);
+    }
+
+    public Playlist createPlaylist(String name) throws Exception {
+        Playlist newPlaylist = new Playlist(-1,name,0,0);
+        return playlistDAO.createPlaylist(newPlaylist);
+    }
+
 }
