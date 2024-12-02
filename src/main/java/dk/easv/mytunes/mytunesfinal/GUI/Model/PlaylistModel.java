@@ -55,6 +55,16 @@ public class PlaylistModel {
         playlistSongs.addAll(songsListForPlaylist);
     }
 
+    public void createPlaylist(String playlistName) {
+        Playlist newPlaylist = null;
+        try {
+            newPlaylist = playlistManager.createPlaylist(playlistName);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        playlist.add(newPlaylist);
+    }
+
 
 
 

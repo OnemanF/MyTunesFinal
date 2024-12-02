@@ -105,6 +105,53 @@ public class PlaylistDAO_DB implements IPlaylistDataAccess {
         return songs;
     }
 
+    @Override
+    public Playlist createPlaylist(Playlist playlist) throws Exception {
+
+        // The SQL command
+        String sqlP = "INSERT INTO Playlist (Name) VALUES (?);";
+
+        try (Connection conn = playlistdatabaseConnector.getConnection();
+             PreparedStatement pstmtP = conn.prepareStatement(sqlP, Statement.RETURN_GENERATED_KEYS)) {
+            conn.setAutoCommit(false);
+
+            // Bind the name parameter
+
+            pstmtP.setString(1, playlist.getName());
+
+            // Execute the insert operation
+            int affectedRows = pstmtP.executeUpdate();
+
+            // Check if the insert was successful
+            if (affectedRows == 0) {
+                throw new SQLException("Creating playlist failed, no rows affected.");
+            }
+            int newPlaylistID = -1;
+            try (ResultSet generatedKeys = pstmtP.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    // Assuming your Playlist table has an auto-incremented ID
+                    newPlaylistID  = generatedKeys.getInt(1);
+
+                } else {
+                    throw new SQLException("Creating playlist failed, no ID obtained.");
+                }
+            }
+
+            conn.commit();
+            playlist.setId(newPlaylistID);
+            return playlist;
+        } catch (SQLException ex) {
+            try(Connection conn = playlistdatabaseConnector.getConnection()) {
+                conn.rollback();
+            }catch (SQLException e){
+                ex.addSuppressed(e);
+            }
+            // Handle any SQL exceptions here
+            throw new Exception("Error creating playlist: " + ex.getMessage(), ex);
+        }
+
+    }
+
 
 
 
