@@ -62,7 +62,7 @@ public class SongDAO_DB implements ISongDataAccess {
     }
 
     @Override
-    public void editSong(Song song) throws Exception {
+    public void updateSongs(Song song) throws Exception {
 
     }
 
