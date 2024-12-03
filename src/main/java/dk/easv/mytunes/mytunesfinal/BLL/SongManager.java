@@ -33,4 +33,10 @@ public class SongManager {
         songDAO.updateSongs(selectedSong);
     }
 
+    public Song CreateSong(Song newSong) throws Exception {
+        songDAO.addSong(newSong);
+        return newSong;
+    }
+
+
 }

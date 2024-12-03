@@ -170,10 +170,19 @@ public class MyTunesController implements Initializable{
                 //showAlert("No song selected", "Please select a song to update.");
             }
         }
+    }
 
+    // Opens a dialog to create new songs.
+    public void CreateSong(ActionEvent actionEvent) throws Exception {
+        Optional<Song> result = dialogboxes.showSongDialog(false, null);
 
-
-
+        result.ifPresent(song -> {
+            try {
+                songModel.CreateSong(song);
+            } catch (Exception e) {
+                e.printStackTrace(); // Or handle the exception in another way
+            }
+        });
     }
 
 

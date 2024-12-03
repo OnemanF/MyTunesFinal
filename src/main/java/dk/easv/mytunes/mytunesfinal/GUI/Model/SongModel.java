@@ -44,4 +44,11 @@ public class SongModel {
             }
         }
     }
+
+    public void CreateSong(Song newSongs) throws Exception {
+        Song s = songManager.CreateSong(newSongs);
+        songsToBeViewed.add(s);
+
+    }
+
 }
