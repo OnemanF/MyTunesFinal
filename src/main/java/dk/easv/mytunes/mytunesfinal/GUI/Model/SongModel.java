@@ -28,4 +28,20 @@ public class SongModel {
         songsToBeViewed.clear();
         songsToBeViewed.addAll(searchResult);
     }
+
+    public void updateSong(Song updatedSong) throws Exception {
+        // update song in DAL layer (through the layers)
+        songManager.updateSongs(updatedSong);
+
+        for (Song song : songsToBeViewed) {
+            if (song.getId() == updatedSong.getId()) {
+                song.setTitle(updatedSong.getTitle());
+                song.setDuration(updatedSong.getDuration());
+                song.setArtist(updatedSong.getArtist());
+                song.setGenre(updatedSong.getGenre());
+                song.setFilePath(updatedSong.getFilePath());
+                break; // Exit the loop after finding the matching song
+            }
+        }
+    }
 }
