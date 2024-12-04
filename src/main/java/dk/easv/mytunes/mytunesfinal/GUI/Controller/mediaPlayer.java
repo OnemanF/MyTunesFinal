@@ -16,10 +16,15 @@ public class MediaPlayer {
     private SongEndListener songEndListener;
     private DoubleProperty currentSongPosition = new SimpleDoubleProperty(0.0);
     private DoubleProperty currentTimeProperty = new SimpleDoubleProperty(0.0);
+    private double currentVolume = 0.5;
 
     // Functional interface for callback
     public interface SongEndListener {
         void onSongEnd();
+    }
+    // Constructor
+    public mediaPlayer(){
+
     }
 
     // Plays media from a specified file path.
@@ -78,6 +83,13 @@ public class MediaPlayer {
                 currentSongPosition.set(scaledPos);
                 currentTimeProperty.set(nv.toSeconds());
             });
+        }
+    }
+    // Sets the volume for the media player.
+    public void setVolume(double volume) {
+        this.currentVolume = volume; // Update the current volume field
+        if (mediaPlayer != null) {
+            mediaPlayer.setVolume(volume); // Set the volume of the mediaPlayer
         }
     }
 

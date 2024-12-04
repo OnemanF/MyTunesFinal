@@ -11,8 +11,13 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.media.MediaPlayer;
 
+<<<<<<< Updated upstream:src/main/java/dk/easv/mytunes/mytunesfinal/GUI/MyTunesController.java
 import java.awt.event.ActionListener;
+=======
+import javax.swing.plaf.basic.BasicOptionPaneUI;
+>>>>>>> Stashed changes:src/main/java/dk/easv/mytunes/mytunesfinal/GUI/Controller/MyTunesController.java
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -50,6 +55,9 @@ public class MyTunesController implements Initializable{
     @FXML
     private TextField txtSongSearch;
 
+    @FXML
+    private Slider songProgressSlider, volumeSlider;
+
     //buttons
     @FXML
     private Button searchButton;
@@ -69,6 +77,9 @@ public class MyTunesController implements Initializable{
     private Button playButton = new Button();
 
     @FXML
+    private Button playButton;
+
+    @FXML
     private AddUpdateSong dialogboxes = new AddUpdateSong();
 >>>>>>> Stashed changes:src/main/java/dk/easv/mytunes/mytunesfinal/GUI/Controller/MyTunesController.java
     private SongModel songModel;
@@ -76,10 +87,14 @@ public class MyTunesController implements Initializable{
 
     private PlaylistManager playlistManager;
 
+<<<<<<< Updated upstream:src/main/java/dk/easv/mytunes/mytunesfinal/GUI/MyTunesController.java
 
     public void playButton(ActionEvent event) {
         mediaPlayer.playMedia("Haddaway - What Is Love [Official 4K].mp3");
     }
+=======
+    mediaPlayer mediaPlayer = new mediaPlayer();
+>>>>>>> Stashed changes:src/main/java/dk/easv/mytunes/mytunesfinal/GUI/Controller/MyTunesController.java
 
     public MyTunesController() {
 
@@ -117,7 +132,7 @@ public class MyTunesController implements Initializable{
 
         setupTableViews();
         loadInPlaylists();
-
+        setupMediaControls();
 
 
     }
@@ -162,6 +177,71 @@ public class MyTunesController implements Initializable{
         tblPlaylist.refresh();
     }
 
+<<<<<<< Updated upstream:src/main/java/dk/easv/mytunes/mytunesfinal/GUI/MyTunesController.java
+=======
+    public void createNewPlaylist(ActionEvent actionEvent) {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Create New Playlist");
+        dialog.setHeaderText("Enter the name of the new playlist:");
+        Optional<String> result = dialog.showAndWait();
+        result.ifPresent(playlistName -> {
+            try {
+                playlistModel.createPlaylist(playlistName);
+                loadInPlaylists(); // Reload or refresh the list
+            } catch (Exception e) {
+                e.printStackTrace(); // Or handle this more gracefully
+            }
+        });
+    }
+
+    // Opens a dialog to update selected song.
+    public void UpdateTheSongs(ActionEvent actionEvent) throws Exception {
+        Song selectedSong = tblSongs.getSelectionModel().getSelectedItem();
+        tblSongsInPlaylist.setItems(songModel.getObservableSongs());
+        if (selectedSong != null) {
+            // If update is pressed the boolean "isUpdating" returns true in order to differentiate between update and create.
+            Optional<Song> result = dialogboxes.showSongDialog(true, selectedSong);
+            result.ifPresent(song -> {
+                try {
+                    songModel.updateSong(song);
+                    tblSongs.refresh();
+                    tblSongsInPlaylist.refresh();
+
+                } catch (Exception e) {
+                    throw new RuntimeException();
+                }
+            });
+        }else{ //Displays message when no song is selected
+            if (selectedSong == null) {
+                //showAlert("No song selected", "Please select a song to update.");
+            }
+        }
+    }
+
+    // Opens a dialog to create new songs.
+    public void CreateSong(ActionEvent actionEvent) throws Exception {
+        Optional<Song> result = dialogboxes.showSongDialog(false, null);
+
+        result.ifPresent(song -> {
+            try {
+                songModel.CreateSong(song);
+            } catch (Exception e) {
+                e.printStackTrace(); // Or handle the exception in another way
+            }
+        });
+    }
+    private void setupMediaControls() {
+
+    }
+
+        // play the selected song.
+        public void playButton (ActionEvent actionEvent) {
+                // Find which song should be played
+                mediaPlayer.playMedia("Haddaway - What Is Love [Official 4K].mp3");
+
+        }
+
+>>>>>>> Stashed changes:src/main/java/dk/easv/mytunes/mytunesfinal/GUI/Controller/MyTunesController.java
 
 <<<<<<< Updated upstream:src/main/java/dk/easv/mytunes/mytunesfinal/GUI/MyTunesController.java
 
