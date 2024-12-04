@@ -1,4 +1,4 @@
-package dk.easv.mytunes.mytunesfinal.GUI;
+package dk.easv.mytunes.mytunesfinal.GUI.Controller;
 
 import dk.easv.mytunes.mytunesfinal.BE.Playlist;
 import dk.easv.mytunes.mytunesfinal.BE.Song;
@@ -6,17 +6,20 @@ import dk.easv.mytunes.mytunesfinal.BLL.PlaylistManager;
 import dk.easv.mytunes.mytunesfinal.GUI.Model.PlaylistModel;
 import dk.easv.mytunes.mytunesfinal.GUI.Model.SongModel;
 import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
-import java.awt.event.ActionListener;
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class MyTunesController implements Initializable{
     //Table view
+    @FXML
+    private ListView<Song> tblSongsInPlaylist;
     @FXML
     private TableView<Song> tblSongs;
     @FXML
@@ -43,8 +46,13 @@ public class MyTunesController implements Initializable{
 
     //buttons
     @FXML
-    private Button searchButton;
+    private Button searchButton, btnNewPlaylist;
 
+    @FXML
+    private Button btnAddNewSong, btUpdateSong;
+
+    @FXML
+    private AddUpdateSong dialogboxes = new AddUpdateSong();
     private SongModel songModel;
     private PlaylistModel playlistModel;
 
@@ -124,6 +132,60 @@ public class MyTunesController implements Initializable{
         playlistModel.loadInPlaylists();
         tblPlaylist.refresh();
     }
+
+    public void createNewPlaylist(ActionEvent actionEvent) {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Create New Playlist");
+        dialog.setHeaderText("Enter the name of the new playlist:");
+        Optional<String> result = dialog.showAndWait();
+        result.ifPresent(playlistName -> {
+            try {
+                playlistModel.createPlaylist(playlistName);
+                loadInPlaylists(); // Reload or refresh the list
+            } catch (Exception e) {
+                e.printStackTrace(); // Or handle this more gracefully
+            }
+        });
+    }
+
+    // Opens a dialog to update selected song.
+    public void UpdateTheSongs(ActionEvent actionEvent) throws Exception {
+        Song selectedSong = tblSongs.getSelectionModel().getSelectedItem();
+        tblSongsInPlaylist.setItems(songModel.getObservableSongs());
+        if (selectedSong != null) {
+            // If update is pressed the boolean "isUpdating" returns true in order to differentiate between update and create.
+            Optional<Song> result = dialogboxes.showSongDialog(true, selectedSong);
+            result.ifPresent(song -> {
+                try {
+                    songModel.updateSong(song);
+                    tblSongs.refresh();
+                    tblSongsInPlaylist.refresh();
+
+                } catch (Exception e) {
+                    throw new RuntimeException();
+                }
+            });
+        }else{ //Displays message when no song is selected
+            if (selectedSong == null) {
+                //showAlert("No song selected", "Please select a song to update.");
+            }
+        }
+    }
+
+    // Opens a dialog to create new songs.
+    public void CreateSong(ActionEvent actionEvent) throws Exception {
+        Optional<Song> result = dialogboxes.showSongDialog(false, null);
+
+        result.ifPresent(song -> {
+            try {
+                songModel.CreateSong(song);
+            } catch (Exception e) {
+                e.printStackTrace(); // Or handle the exception in another way
+            }
+        });
+    }
+
+
 
 
 

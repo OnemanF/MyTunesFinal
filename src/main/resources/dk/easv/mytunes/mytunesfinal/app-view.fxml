@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" prefHeight="735.0" prefWidth="930.0" spacing="20.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.mytunes.mytunesfinal.GUI.MyTunesController">
+<VBox alignment="CENTER" prefHeight="735.0" prefWidth="930.0" spacing="20.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.mytunes.mytunesfinal.GUI.Controller.MyTunesController">
    <padding>
       <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
    </padding>
@@ -40,7 +40,7 @@
                   <TableColumn fx:id="colSongsDuration" prefWidth="79.19998779296876" style="-fx-background-color: #69b9e2;" text="Duration" />
                </columns>
             </TableView>
-            <ListView layoutX="320.0" layoutY="148.0" prefHeight="478.0" prefWidth="188.0" style="-fx-background-color: #a3d8f3;" />
+            <ListView fx:id="tblSongsInPlaylist" layoutX="320.0" layoutY="148.0" prefHeight="478.0" prefWidth="188.0" style="-fx-background-color: #a3d8f3;" />
             <TableView fx:id="tblSongs" layoutX="578.0" layoutY="148.0" prefHeight="478.0" prefWidth="305.0" style="-fx-background-color: #a3d8f3;">
                <columns>
                   <TableColumn fx:id="colTitle" prefWidth="75.0" style="-fx-background-color: #69b9e2;" text="Title" />
@@ -61,11 +61,11 @@
                   <Font size="13.0" />
                </font></Button>
             <Button layoutX="457.0" layoutY="640.0" mnemonicParsing="false" style="-fx-background-color: #69b9e2;" text="Delete" />
-            <Button layoutX="578.0" layoutY="640.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="50.0" style="-fx-background-color: #69b9e2;" text="New" />
-            <Button layoutX="644.0" layoutY="640.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="50.0" style="-fx-background-color: #69b9e2;" text="Edit" />
-            <Button layoutX="705.0" layoutY="640.0" mnemonicParsing="false" style="-fx-background-color: #69b9e2;" text="Delete" />
+            <Button fx:id="btnAddNewSong" layoutX="578.0" layoutY="640.0" mnemonicParsing="false" onAction="#CreateSong" prefHeight="26.0" prefWidth="50.0" style="-fx-background-color: #69b9e2;" text="New" />
+            <Button fx:id="btnUpdateSong" layoutX="644.0" layoutY="640.0" mnemonicParsing="false" onAction="#UpdateTheSongs" prefHeight="26.0" prefWidth="62.0" style="-fx-background-color: #69b9e2;" text="Update" />
+            <Button layoutX="722.0" layoutY="640.0" mnemonicParsing="false" style="-fx-background-color: #69b9e2;" text="Delete" />
             <Button layoutX="839.0" layoutY="639.0" mnemonicParsing="false" style="-fx-background-color: #69b9e2;" text="Close" />
-            <Button layoutX="25.0" layoutY="639.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="50.0" style="-fx-background-color: #69b9e2;" text="New" />
+            <Button fx:id="btnNewPlaylist" layoutX="25.0" layoutY="639.0" mnemonicParsing="false" onAction="#createNewPlaylist" prefHeight="26.0" prefWidth="50.0" style="-fx-background-color: #69b9e2;" text="New" />
             <Button layoutX="87.0" layoutY="640.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="50.0" style="-fx-background-color: #69b9e2;" text="Edit" />
             <Button layoutX="152.0" layoutY="640.0" mnemonicParsing="false" style="-fx-background-color: #69b9e2;" text="Delete" />
             <Label layoutX="202.0" layoutY="78.0" text="🕪" />

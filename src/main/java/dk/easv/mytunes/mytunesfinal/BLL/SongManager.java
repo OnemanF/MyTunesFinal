@@ -28,4 +28,15 @@ public class SongManager {
         return searchResult;
 
     }
+
+    public void updateSongs(Song selectedSong) throws Exception {
+        songDAO.updateSongs(selectedSong);
+    }
+
+    public Song CreateSong(Song newSong) throws Exception {
+        songDAO.addSong(newSong);
+        return newSong;
+    }
+
+
 }
