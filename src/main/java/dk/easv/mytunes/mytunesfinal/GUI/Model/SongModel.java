@@ -44,4 +44,11 @@ public class SongModel {
             }
         }
     }
+
+    public void addSong(Song newSong) throws Exception {
+        Song s = songManager.addSong(newSong);
+        songsToBeViewed.add(s);
+
+    }
+
 }
