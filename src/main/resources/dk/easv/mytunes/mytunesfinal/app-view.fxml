@@ -20,7 +20,7 @@
       <AnchorPane prefHeight="691.0" prefWidth="881.0" style="-fx-background-color: #c2e3f3;">
          <children>
             <Button layoutX="20.0" layoutY="34.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="52.0" style="-fx-background-color: #69b9e2;" text="⏮" />
-            <Button layoutX="79.0" layoutY="34.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="33.0" style="-fx-background-color: #69b9e2;" text="▶" />
+            <Button fx:id="playButton" layoutX="79.0" layoutY="34.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="33.0" style="-fx-background-color: #69b9e2;" text="▶" />
             <Button layoutX="164.0" layoutY="34.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="52.0" style="-fx-background-color: #69b9e2;" text="⏭">
                <font>
                   <Font size="13.0" />

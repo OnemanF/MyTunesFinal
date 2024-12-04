@@ -6,6 +6,7 @@ import dk.easv.mytunes.mytunesfinal.BLL.PlaylistManager;
 import dk.easv.mytunes.mytunesfinal.GUI.Model.PlaylistModel;
 import dk.easv.mytunes.mytunesfinal.GUI.Model.SongModel;
 import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -35,7 +36,8 @@ public class MyTunesController implements Initializable{
     @FXML
     private TableColumn<Playlist, String> colName, colSongs, colSongsDuration;
 
-
+    @FXML
+    private MediaPlayer mediaPlayer;
 
     //search field
     @FXML
@@ -45,12 +47,24 @@ public class MyTunesController implements Initializable{
     @FXML
     private Button searchButton;
 
+    @FXML
+    private Button playButton = new Button();
+
+
+    public void playButton(ActionEvent event) {
+        mediaPlayer.playMedia("Haddaway - What Is Love [Official 4K].mp3");
+    }
+
+
     private SongModel songModel;
     private PlaylistModel playlistModel;
 
     private PlaylistManager playlistManager;
 
     public MyTunesController() {
+
+
+        mediaPlayer = new MediaPlayer();
 
         try {
 
