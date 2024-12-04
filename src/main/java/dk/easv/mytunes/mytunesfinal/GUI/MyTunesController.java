@@ -36,8 +36,15 @@ public class MyTunesController implements Initializable{
     @FXML
     private TableColumn<Playlist, String> colName, colSongs, colSongsDuration;
 
+<<<<<<< Updated upstream:src/main/java/dk/easv/mytunes/mytunesfinal/GUI/MyTunesController.java
     @FXML
     private MediaPlayer mediaPlayer;
+=======
+    //media player
+    @FXML
+    private
+    MediaPlayer mediaPlayer;
+>>>>>>> Stashed changes:src/main/java/dk/easv/mytunes/mytunesfinal/GUI/Controller/MyTunesController.java
 
     //search field
     @FXML
@@ -56,14 +63,30 @@ public class MyTunesController implements Initializable{
     }
 
 
+<<<<<<< Updated upstream:src/main/java/dk/easv/mytunes/mytunesfinal/GUI/MyTunesController.java
+=======
+    @FXML
+    private Button playButton = new Button();
+
+    @FXML
+    private AddUpdateSong dialogboxes = new AddUpdateSong();
+>>>>>>> Stashed changes:src/main/java/dk/easv/mytunes/mytunesfinal/GUI/Controller/MyTunesController.java
     private SongModel songModel;
     private PlaylistModel playlistModel;
 
     private PlaylistManager playlistManager;
 
+
+    public void playButton(ActionEvent event) {
+        mediaPlayer.playMedia("Haddaway - What Is Love [Official 4K].mp3");
+    }
+
     public MyTunesController() {
 
+<<<<<<< Updated upstream:src/main/java/dk/easv/mytunes/mytunesfinal/GUI/MyTunesController.java
 
+=======
+>>>>>>> Stashed changes:src/main/java/dk/easv/mytunes/mytunesfinal/GUI/Controller/MyTunesController.java
         mediaPlayer = new MediaPlayer();
 
         try {
@@ -140,5 +163,9 @@ public class MyTunesController implements Initializable{
     }
 
 
+<<<<<<< Updated upstream:src/main/java/dk/easv/mytunes/mytunesfinal/GUI/MyTunesController.java
 
 }
+=======
+}
+>>>>>>> Stashed changes:src/main/java/dk/easv/mytunes/mytunesfinal/GUI/Controller/MyTunesController.java
