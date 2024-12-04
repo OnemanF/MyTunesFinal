@@ -11,7 +11,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 
+import java.io.File;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -53,6 +56,7 @@ public class MyTunesController implements Initializable{
 
     @FXML
     private AddUpdateSong dialogboxes = new AddUpdateSong();
+
     private SongModel songModel;
     private PlaylistModel playlistModel;
 
@@ -111,7 +115,7 @@ public class MyTunesController implements Initializable{
 
         tblPlaylist.setItems(playlistModel.getPlaylists());
         colName.setCellValueFactory(new PropertyValueFactory<>("Name"));
-        colSongs.setCellValueFactory(new PropertyValueFactory<>("totalSongs"));
+        colSongs.setCellValueFactory(new PropertyValueFactory<>("SongsAmount"));
         colSongsDuration.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(getDurationFormatted(cellData.getValue().getPlaylistTotalDuration())));
 
 
@@ -173,20 +177,28 @@ public class MyTunesController implements Initializable{
     }
 
     // Opens a dialog to create new songs.
-    public void CreateSong(ActionEvent actionEvent) throws Exception {
+    public void addSong(ActionEvent actionEvent) throws Exception {
+
         Optional<Song> result = dialogboxes.showSongDialog(false, null);
 
-        result.ifPresent(song -> {
+        result.ifPresent(newSong -> {
             try {
-                songModel.CreateSong(song);
+                songModel.addSong(newSong);
             } catch (Exception e) {
                 e.printStackTrace(); // Or handle the exception in another way
             }
         });
     }
 
+    //IMPLEMENT
+    public void onPlay(ActionEvent actionEvent) {
 
+        String path = "music/Ariana Grande - Santa Tell Me (Official Video).mp3";
 
+        Media media = new Media(new File(path).toURI().toString());
+        MediaPlayer mediaPlayer = new MediaPlayer(media);
+        mediaPlayer.play();
 
-
+        System.out.println("onPlay");
+    }
 }

@@ -1,6 +1,8 @@
 package dk.easv.mytunes.mytunesfinal.GUI.Controller;
 
+import dk.easv.mytunes.mytunesfinal.BE.Genre;
 import dk.easv.mytunes.mytunesfinal.BE.Song;
+import dk.easv.mytunes.mytunesfinal.DAO.db.GenreDAO_DB;
 import javafx.beans.binding.BooleanBinding;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -9,57 +11,138 @@ import javafx.scene.media.Media;
 //import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.FileChooser;
+import javafx.util.Duration;
 
 //import javax.print.attribute.standard.Media;
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.List;
 import java.util.Optional;
 
 public class AddUpdateSong {
 
-    public Optional<Song> showSongDialog(boolean Updating, Song selectedSong) {
+    // Uses boolean to check if you are updating or adding song. if true it updates if false it adds new song.
+    public Optional<Song> showSongDialog(boolean Updating, Song selectedSong) throws Exception {
 
-        // Create and configure the pop-up
+
+
+
+        // Creating dialog box
         Dialog<Song> dialog = new Dialog<>();
         dialog.setTitle(Updating ? "Update Song" : "Add New Song");
-        ButtonType actionButton = new ButtonType(Updating ? "Update" : "Add", ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().addAll(actionButton, ButtonType.CANCEL);
 
-        // Create input elements
+        ButtonType addUpdateButtonType = new ButtonType(Updating ? "Update" : "Add", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(addUpdateButtonType, ButtonType.CANCEL);
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+
+        // Adding input fields
         TextField titleField = new TextField();
+        titleField.setPromptText("Title");
         TextField artistField = new TextField();
-        TextField genreField = new TextField();
-        //ComboBox<String> genreComboBox = new ComboBox<>();
+        artistField.setPromptText("Artist Name");
+        ComboBox<String> genreComboBox = new ComboBox<>();
+        genreComboBox.setPromptText("Select Genre");
         TextField durationField = new TextField();
+        durationField.setPromptText("Time in Seconds");
         TextField filePathField = new TextField();
-        Button chooseFileButton = new Button("Choose File");
+        filePathField.setEditable(false);
 
-        // Initialize the genre combo box
-        //GenreDAO_DB genreDAO = new GenreDAO_DB();
-        //genreComboBox.getItems().addAll(genreDAO.getAllGenre().stream().map(Genre::getGenreType).collect(Collectors.toList()));
+        GenreDAO_DB genreDAO = new GenreDAO_DB();
+        List<Genre> allGenres = genreDAO.getAllGenre();
 
-        // Configure layout
-        GridPane grid = createFormGrid(titleField, artistField, genreField, durationField, filePathField, chooseFileButton);
+        //makes the dropdown empty
+        genreComboBox.getItems().clear();
 
-        // Populate fields if updating
-        if (Updating && selectedSong != null) {
-            populateFields(selectedSong, titleField, artistField, genreField, durationField, filePathField);
+        for (Genre genre : allGenres) {
+            genreComboBox.getItems().add(genre.getGenreName());
         }
 
-        // Handles file
+        grid.add(new Label("Title:"), 0, 0);
+        grid.add(titleField, 1, 0);
+        grid.add(new Label("Artist:"), 0, 1);
+        grid.add(artistField, 1, 1);
+        grid.add(new Label("Genre:"), 0, 2);
+        grid.add(genreComboBox, 1, 2);
+        grid.add(new Label("Duration:"), 0, 3);
+        grid.add(durationField, 1, 3);
+        grid.add(new Label("File:"), 0, 4);
+        grid.add(filePathField, 1, 4);
+
+        // If updating the dialog box will include all the items of the selected song
+        if (Updating && selectedSong != null) {
+            titleField.setText(selectedSong.getTitle());
+            artistField.setText(selectedSong.getArtist());
+            genreComboBox.setValue(selectedSong.getGenre());
+            durationField.setText(String.valueOf(selectedSong.getDuration()));
+            filePathField.setText(selectedSong.getFilePath());
+        }
+
+        // Chooses a MP3 file
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("MP3 Files", "*.mp3"));
-        chooseFileButton.setOnAction(e -> handleFileSelection(fileChooser, titleField, artistField, genreField, durationField, filePathField));
+        Button chooseFileButton = new Button("Choose file");
+        grid.add(chooseFileButton, 2, 4);
+        // Extracts the metadata from the file
+        chooseFileButton.setOnAction(e -> {
+            File selectedFile = fileChooser.showOpenDialog(dialog.getOwner());
+            if (selectedFile != null) {
+                copyFileToDataFolder(selectedFile);
+                filePathField.setText(selectedFile.getName()); // Changed to use getName() instead
+
+                Media media = new Media(selectedFile.toURI().toString());
+                MediaPlayer mediaPlayer = new MediaPlayer(media);
+
+                mediaPlayer.setOnReady(() -> {
+                    String artist = (String) media.getMetadata().get("artist");
+                    String title = (String) media.getMetadata().get("title");
+                    Duration duration = media.getDuration();
+
+                    titleField.setText(title != null ? title : "");
+                    artistField.setText(artist != null ? artist : "");
+                    genreComboBox.setValue(""); // Genre is rarely part of the metadata
+                    durationField.setText(String.valueOf((int) duration.toSeconds()));
+                });
+            }
+        });
 
         dialog.getDialogPane().setContent(grid);
 
-        // Disable button if any field is empty
-        Node actionButtonNode = dialog.getDialogPane().lookupButton(actionButton);
-        actionButtonNode.disableProperty().bind(isAnyFieldEmpty(titleField, artistField, genreField, durationField, filePathField));
+        // Checks if the input fields are empty or not
+        BooleanBinding anyFieldEmpty = titleField.textProperty().isEmpty()
+                .or(artistField.textProperty().isEmpty())
+                .or(genreComboBox.valueProperty().isNull()).or(genreComboBox.valueProperty().asString().isEmpty())
+                .or(durationField.textProperty().isEmpty())
+                .or(filePathField.textProperty().isEmpty());
 
-        // Handle conversion
+        // Makes the add/update button invisible if any of the input fields are empty
+        Node addButton = dialog.getDialogPane().lookupButton(addUpdateButtonType);
+        addButton.disableProperty().bind(anyFieldEmpty);
+
+        // Checks if a new song is being created or a song is being updated using boolean
+        // And inputs the new values based on that
         dialog.setResultConverter(dialogButton -> {
-            if (dialogButton == actionButton) {
-                return createSong(Updating, selectedSong, titleField, artistField, genreField, durationField, filePathField);
+            if (dialogButton == addUpdateButtonType) {
+                if (Updating) {
+                    return new Song(selectedSong.getId(),
+                            artistField.getText(),
+                            titleField.getText(),
+                            genreComboBox.getValue(),
+                            Integer.parseInt(durationField.getText()),
+                            filePathField.getText());
+                } else {
+                    return new Song(
+                            artistField.getText(),
+                            titleField.getText(),
+                            genreComboBox.getValue(),
+                            Integer.parseInt(durationField.getText()),
+                            filePathField.getText());
+                }
             }
             return null;
         });
@@ -68,93 +151,17 @@ public class AddUpdateSong {
     }
 
 
-    // Helper methods to keep the code clean
-    private GridPane createFormGrid(TextField titleField, TextField artistField,
-                                    TextField durationField, TextField filePathField, TextField pathField, Button chooseFileButton) {
-        GridPane grid = new GridPane();
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.add(new Label("Title:"), 0, 0);
-        grid.add(titleField, 1, 0);
-        grid.add(new Label("Artist:"), 0, 1);
-        grid.add(artistField, 1, 1);
-        grid.add(new Label("Genre:"), 0, 2);
-        //grid.add(genreComboBox, 1, 2);
-        grid.add(new Label("Time:"), 0, 3);
-        grid.add(durationField, 1, 3);
-        grid.add(new Label("File:"), 0, 4);
-        grid.add(filePathField, 1, 4);
-        grid.add(chooseFileButton, 2, 4); // File chooser button
-        return grid;
-    }
-
-
-
-    private void populateFields(Song selectedSong, TextField titleField, TextField artistField,
-                                TextField durationField, TextField filePathField, TextField pathField) {
-        titleField.setText(selectedSong.getTitle());
-        artistField.setText(selectedSong.getArtist());
-        //genreComboBox.setValue(selectedSong.getGenre());
-        durationField.setText(String.valueOf(selectedSong.getDuration()));
-        filePathField.setText(selectedSong.getFilePath());
-    }
-
-    private void handleFileSelection(FileChooser fileChooser, TextField filePathField, TextField titleField,
-                                     TextField artistField, TextField durationField, TextField field) {
-        File selectedFile = fileChooser.showOpenDialog(null);
-        if (selectedFile != null) {
-            filePathField.setText(selectedFile.getName());
-            extractMetadataFromFile(selectedFile, titleField, artistField, durationField);
+    //Puts the new files added into our data folder in our project
+    private void copyFileToDataFolder(File sourceFile) {
+        try {
+            Path destinationPath = Paths.get("music", sourceFile.getName());
+            Files.copy(sourceFile.toPath(), destinationPath, StandardCopyOption.REPLACE_EXISTING);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
-
-
-    private void extractMetadataFromFile(File file, TextField titleField, TextField artistField,
-                                         TextField durationField) {
-        Media media = new Media(file.toURI().toString());
-        MediaPlayer mediaPlayer = new MediaPlayer(media);
-        mediaPlayer.setOnReady(() -> {
-            titleField.setText(media.getMetadata().get("title") != null ? (String) media.getMetadata().get("title") : "");
-            artistField.setText(media.getMetadata().get("artist") != null ? (String) media.getMetadata().get("artist") : "");
-            //genreComboBox.setValue(""); // Genre is rarely in the metadata
-            durationField.setText(String.valueOf((int) media.getDuration().toSeconds()));
-        });
-    }
-
-
-
-    private BooleanBinding isAnyFieldEmpty(TextField titleField, TextField artistField,
-                                           TextField durationField, TextField filePathField, TextField pathField) {
-        return titleField.textProperty().isEmpty()
-                .or(artistField.textProperty().isEmpty())
-               // .or(genreComboBox.valueProperty().isNull())
-                .or(durationField.textProperty().isEmpty())
-                .or(filePathField.textProperty().isEmpty());
-    }
-
-    private Song createSong(boolean Updating, Song selectedSong, TextField artistField, TextField titleField,
-                            TextField durationField, TextField genreField, TextField filePathField) {
-        int duration = Integer.parseInt(durationField.getText());
-        if (Updating) {
-            return new Song(selectedSong.getId(),
-                    artistField.getText(),
-                    titleField.getText(),
-                    genreField.getText(),
-                    //genreComboBox.getValue(),
-                    duration,
-                    filePathField.getText());
-
-        } else {
-            return new Song(
-                    0,
-                    artistField.getText(),
-                    titleField.getText(),
-                    genreField.getText(),
-                    //genreComboBox.getValue(),
-                    Integer.parseInt(durationField.getText()),
-                    filePathField.getText());
-        }
-    }
-
-
 }
+
+
+
+
