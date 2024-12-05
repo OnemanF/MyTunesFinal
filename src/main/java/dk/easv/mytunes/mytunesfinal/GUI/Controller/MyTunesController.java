@@ -207,6 +207,16 @@ public class MyTunesController implements Initializable {
             System.out.println("No songs available to play!");
             return;
         }
+
+        if (mediaPlayer != null) {
+            // If mediaPlayer is paused, resume playback
+            MediaPlayer.Status status = mediaPlayer.getStatus();
+            if (status == MediaPlayer.Status.PAUSED || status == MediaPlayer.Status.READY) {
+                mediaPlayer.play();
+                System.out.println("Resumed playback.");
+                return;
+            }
+        }
         
         songPaths = items.stream().toList(); // Convert to a List<String>.
         currentSongIndex = 0; // Reset to the start of the playlist.
@@ -240,7 +250,7 @@ public class MyTunesController implements Initializable {
 
     public void onStop(ActionEvent actionEvent) {
         if (mediaPlayer != null) {
-            mediaPlayer.pause();
+            mediaPlayer.stop();
         }
     }
 
