@@ -10,7 +10,7 @@ public interface ISongDataAccess {
 
     List<Song> getAllSongs() throws Exception;
     //Song addSong(Song newSong) throws Exception;
-    void updateSongs(Song song) throws Exception;
+    void updateSongs(Song song, int artistID, int genreID) throws Exception;
     void deleteSong(Song song) throws Exception;
 
 

@@ -22,7 +22,7 @@ import java.util.ResourceBundle;
 public class MyTunesController implements Initializable{
     //Table view
     @FXML
-    private ListView<Song> tblSongsInPlaylist;
+    private TableView<Song> tblSongsOnPlaylist;
     @FXML
     private TableView<Song> tblSongs;
     @FXML
@@ -36,6 +36,8 @@ public class MyTunesController implements Initializable{
     private TableColumn<Song, String> colGenre;
     @FXML
     private TableColumn<Song, String> colDuration;
+    @FXML
+    private TableColumn<Song, String> colSong, colSongsArtist;
 
     //playlist table
     @FXML
@@ -92,6 +94,7 @@ public class MyTunesController implements Initializable{
 
         setupTableViews();
         loadInPlaylists();
+        setupEventListeners();
 
 
 
@@ -153,9 +156,9 @@ public class MyTunesController implements Initializable{
     }
 
     // Opens a dialog to update selected song.
-    public void UpdateTheSongs(ActionEvent actionEvent) throws Exception {
+    public void updateSong(ActionEvent actionEvent) throws Exception {
         Song selectedSong = tblSongs.getSelectionModel().getSelectedItem();
-        tblSongsInPlaylist.setItems(songModel.getObservableSongs());
+        tblSongsOnPlaylist.setItems(songModel.getObservableSongs());
         if (selectedSong != null) {
             // If update is pressed the boolean "isUpdating" returns true in order to differentiate between update and create.
             Optional<Song> result = dialogboxes.showSongDialog(true, selectedSong);
@@ -163,7 +166,7 @@ public class MyTunesController implements Initializable{
                 try {
                     songModel.updateSong(song);
                     tblSongs.refresh();
-                    tblSongsInPlaylist.refresh();
+                    tblSongsOnPlaylist.refresh();
 
                 } catch (Exception e) {
                     throw new RuntimeException();
@@ -171,7 +174,7 @@ public class MyTunesController implements Initializable{
             });
         }else{ //Displays message when no song is selected
             if (selectedSong == null) {
-                //showAlert("No song selected", "Please select a song to update.");
+                showAlert("No song selected", "Please select a song to update.");
             }
         }
     }
@@ -201,4 +204,26 @@ public class MyTunesController implements Initializable{
 
         System.out.println("onPlay");
     }
+
+    private void setupEventListeners() {
+        tblPlaylist.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                playlistModel.loadSongsForPlaylist(newSelection.getId());
+            }
+        });
+
+    }
+
+
+    // Displays an alert dialog with specified title and content.
+    private void showAlert(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+
+
+
 }
