@@ -161,7 +161,7 @@ public class MyTunesController implements Initializable {
     }
 
     // Opens a dialog to update selected song.
-    public void UpdateTheSongs(ActionEvent actionEvent) throws Exception {
+    public void updateSong(ActionEvent actionEvent) throws Exception {
         Song selectedSong = tblSongs.getSelectionModel().getSelectedItem();
         tblSongsOnPlaylist.setItems(songModel.getObservableSongs());
         if (selectedSong != null) {
