@@ -17,8 +17,16 @@ public class Song {
         this.artist = artist;
         this.genre = genre;
         this.duration = duration;
+        this.FilePath = filePath;
+    }
 
-        FilePath = filePath;
+    public Song(String title, String artist, String genre, int duration, String filePath) {
+
+        this.title = title;
+        this.artist = artist;
+        this.genre = genre;
+        this.duration = duration;
+        this.FilePath = filePath;
     }
 
         public String getFilePath () {

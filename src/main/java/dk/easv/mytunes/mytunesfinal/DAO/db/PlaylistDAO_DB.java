@@ -26,6 +26,7 @@ public class PlaylistDAO_DB implements IPlaylistDataAccess {
                 "Left JOIN Song song ON sop.SongID = song.SongID\n" +
                 "GROUP BY playlist.PlaylistID, playlist.Name";
 
+
         try (Connection conn = playlistdatabaseConnector.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
@@ -73,9 +74,16 @@ public class PlaylistDAO_DB implements IPlaylistDataAccess {
 
     public List<Song> getSongsForPlaylist(int playlistID) {
         List<Song> songs = new ArrayList<>();
-        String sql = " SELECT s.SongID, s.Title, s.Duration, s.FilePath " +
+        String sql = /*" SELECT s.SongID, s.Title, s.Duration, s.FilePath " +
                 "FROM Songs s " +
 
+                "INNER JOIN SongsOnPlaylist sop ON s.SongID = sop.SongID " +
+                "WHERE sop.PlaylistID = ?";*/
+
+        "SELECT s.SongID, s.Title, s.Duration, s.FilePath, a.ArtistName, g.GenreName " +
+                "FROM Song s " +
+                "INNER JOIN Artist a ON s.ArtistID = a.ArtistID " +
+                "INNER JOIN Genre g ON s.GenreID = g.GenreID " +
                 "INNER JOIN SongsOnPlaylist sop ON s.SongID = sop.SongID " +
                 "WHERE sop.PlaylistID = ?";
 
@@ -86,14 +94,17 @@ public class PlaylistDAO_DB implements IPlaylistDataAccess {
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
+
                     int id = rs.getInt("SongID");
                     String title = rs.getString("Title");
+                    String artistName = rs.getString("ArtistName");
+                    String genreName = rs.getString("GenreName");
                     int duration = rs.getInt("Duration");
                     String filePath = rs.getString("FilePath");
-                    String name = rs.getString("Artist");
-                    String genre = rs.getString("Genre");
 
-                    Song song = new Song(id, name, title, genre, duration, filePath);
+
+
+                    Song song = new Song(id, title, artistName, genreName, duration, filePath);
                     songs.add(song);
                 }
             }

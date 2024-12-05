@@ -45,8 +45,8 @@ public class SongModel {
         }
     }
 
-    public void CreateSong(Song newSongs) throws Exception {
-        Song s = songManager.CreateSong(newSongs);
+    public void addSong(Song newSong) throws Exception {
+        Song s = songManager.addSong(newSong);
         songsToBeViewed.add(s);
 
     }
