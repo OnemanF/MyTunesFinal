@@ -58,7 +58,7 @@ public class SongDAO_DB implements ISongDataAccess {
     @Override
     public void updateSongs(Song song, int artistID, int genreID) throws Exception {
         // SQL command
-        String sql = "UPDATE dbo.Songs SET Title = ?, Duration = ?, ArtistID = ?, GenreID = ?, FilePath = ? WHERE SongID = ?";
+        String sql = "UPDATE dbo.Song SET Title = ?, Duration = ?, ArtistID = ?, GenreID = ?, FilePath = ? WHERE SongID = ?";
 
         System.out.println("Updating song with ID: " + song.getId());
         System.out.println("ArtistID: " + artistID);
