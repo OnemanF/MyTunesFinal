@@ -220,6 +220,7 @@ public class MyTunesController implements Initializable {
                 System.out.println("Already playing, moron.");
                 return;
             }
+            
         }
         
         songPaths = items.stream().toList(); // Convert to a List<String>.
