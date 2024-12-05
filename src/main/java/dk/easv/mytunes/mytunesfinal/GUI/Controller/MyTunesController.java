@@ -94,6 +94,7 @@ public class MyTunesController implements Initializable{
 
         setupTableViews();
         loadInPlaylists();
+        setupEventListeners();
 
 
 
@@ -202,5 +203,14 @@ public class MyTunesController implements Initializable{
         mediaPlayer.play();
 
         System.out.println("onPlay");
+    }
+
+    private void setupEventListeners() {
+        tblPlaylist.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                playlistModel.loadSongsForPlaylist(newSelection.getId());
+            }
+        });
+
     }
 }
