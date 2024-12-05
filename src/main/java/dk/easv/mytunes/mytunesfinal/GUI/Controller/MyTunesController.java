@@ -215,6 +215,10 @@ public class MyTunesController implements Initializable {
                 mediaPlayer.play();
                 System.out.println("Resumed playback.");
                 return;
+                }
+            else if (status == MediaPlayer.Status.PLAYING) {
+                System.out.println("Already playing, moron.");
+                return;
             }
         }
         
@@ -250,7 +254,7 @@ public class MyTunesController implements Initializable {
 
     public void onStop(ActionEvent actionEvent) {
         if (mediaPlayer != null) {
-            mediaPlayer.stop();
+            mediaPlayer.pause();
         }
     }
 
