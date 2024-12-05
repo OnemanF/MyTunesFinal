@@ -22,7 +22,7 @@ import java.util.ResourceBundle;
 public class MyTunesController implements Initializable{
     //Table view
     @FXML
-    private ListView<Song> tblSongsInPlaylist;
+    private TableView<Song> tblSongsOnPlaylist;
     @FXML
     private TableView<Song> tblSongs;
     @FXML
@@ -36,6 +36,8 @@ public class MyTunesController implements Initializable{
     private TableColumn<Song, String> colGenre;
     @FXML
     private TableColumn<Song, String> colDuration;
+    @FXML
+    private TableColumn<Song, String> colSong, colSongsArtist;
 
     //playlist table
     @FXML
@@ -155,7 +157,7 @@ public class MyTunesController implements Initializable{
     // Opens a dialog to update selected song.
     public void UpdateTheSongs(ActionEvent actionEvent) throws Exception {
         Song selectedSong = tblSongs.getSelectionModel().getSelectedItem();
-        tblSongsInPlaylist.setItems(songModel.getObservableSongs());
+        tblSongsOnPlaylist.setItems(songModel.getObservableSongs());
         if (selectedSong != null) {
             // If update is pressed the boolean "isUpdating" returns true in order to differentiate between update and create.
             Optional<Song> result = dialogboxes.showSongDialog(true, selectedSong);
@@ -163,7 +165,7 @@ public class MyTunesController implements Initializable{
                 try {
                     songModel.updateSong(song);
                     tblSongs.refresh();
-                    tblSongsInPlaylist.refresh();
+                    tblSongsOnPlaylist.refresh();
 
                 } catch (Exception e) {
                     throw new RuntimeException();
