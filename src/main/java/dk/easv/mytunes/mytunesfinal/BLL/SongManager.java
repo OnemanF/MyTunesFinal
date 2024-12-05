@@ -38,6 +38,21 @@ public class SongManager {
     }
 
     public void updateSongs(Song selectedSong) throws Exception {
+
+        try {
+            int artistID = ensureArtistExists(selectedSong.getArtist());
+            int genreID = ensureGenreExists(selectedSong.getGenre());
+
+            // Pass the updated song along with artist and genre IDs to the DAO
+            songDAO.updateSongs(selectedSong, artistID, genreID);
+
+        } catch (Exception e) {
+            // Log and rethrow for higher-level handling
+            System.err.println("Error updating song: " + e.getMessage());
+            throw e;
+        }
+
+        /*
         Artist artist = new Artist(-1, selectedSong.getArtist());
         Genre genre = new Genre(-1, selectedSong.getGenre());
         artist.setArtistID(artistDAO_DB.getArtistID(selectedSong.getArtist()));
@@ -47,10 +62,42 @@ public class SongManager {
 
         }
         songDAO.updateSongs(selectedSong, artist.getArtistID(),genre.getGenreID());
+
+         */
+    }
+    private int ensureArtistExists(String artistName) throws Exception {
+        int artistID = artistDAO_DB.getArtistID(artistName);
+        if (artistID == -1) {
+            Artist newArtist = artistDAO_DB.insertArtist(new Artist(-1, artistName));
+            artistID = newArtist.getArtistID();
+        }
+        return artistID;
+    }
+    private int ensureGenreExists(String genreName) throws Exception {
+        int genreID = genreDAO_DB.getGenreID(genreName);
+        if (genreID == -1) {
+            Genre newGenre = genreDAO_DB.insertGenre(new Genre(-1, genreName));
+            genreID = newGenre.getGenreID();
+        }
+        return genreID;
     }
 
-    public Song addSong(Song newSong) throws Exception {
 
+    public Song addSong(Song newSong) throws Exception {
+        try {
+            int artistID = ensureArtistExists(newSong.getArtist());
+            int genreID = ensureGenreExists(newSong.getGenre());
+
+            // Add the song via DAO and return the result
+            return songDAO.addSong(newSong, artistID, genreID);
+
+        } catch (Exception e) {
+            // Log and rethrow for higher-level handling
+            System.err.println("Error adding song: " + e.getMessage());
+            throw e;
+        }
+    }
+        /*
         Artist artist = new Artist(-1, newSong.getArtist());
         Genre genre = new Genre(-1, newSong.getGenre());
         artist.setArtistID(artistDAO_DB.getArtistID(newSong.getArtist()));
@@ -61,7 +108,9 @@ public class SongManager {
         }
 
         return songDAO.addSong(newSong,artist.getArtistID(),genre.getGenreID());
+
+         */
     }
 
 
-}
+

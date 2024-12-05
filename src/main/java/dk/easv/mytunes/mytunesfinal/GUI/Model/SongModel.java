@@ -26,21 +26,19 @@ public class SongModel {
     public void searchSong(String query) throws Exception {
         List<Song> searchResult = songManager.songSearch(query);
         songsToBeViewed.clear();
-        songsToBeViewed.addAll(searchResult);
+        if (searchResult.isEmpty()) {
+            System.out.println("No songs found for query: " + query);
+        } else {
+            songsToBeViewed.addAll(searchResult);
+        }
     }
 
     public void updateSong(Song updatedSong) throws Exception {
-        // update song in DAL layer (through the layers)
         songManager.updateSongs(updatedSong);
-
-        for (Song song : songsToBeViewed) {
-            if (song.getId() == updatedSong.getId()) {
-                song.setTitle(updatedSong.getTitle());
-                song.setDuration(updatedSong.getDuration());
-                song.setArtist(updatedSong.getArtist());
-                song.setGenre(updatedSong.getGenre());
-                song.setFilePath(updatedSong.getFilePath());
-                break; // Exit the loop after finding the matching song
+        for (int i = 0; i < songsToBeViewed.size(); i++) {
+            if (songsToBeViewed.get(i).getId() == updatedSong.getId()) {
+                songsToBeViewed.set(i, updatedSong);
+                break;
             }
         }
     }
