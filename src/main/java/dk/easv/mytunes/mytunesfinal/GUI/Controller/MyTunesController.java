@@ -6,6 +6,7 @@ import dk.easv.mytunes.mytunesfinal.BLL.PlaylistManager;
 import dk.easv.mytunes.mytunesfinal.GUI.Model.PlaylistModel;
 import dk.easv.mytunes.mytunesfinal.GUI.Model.SongModel;
 import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -16,10 +17,11 @@ import javafx.scene.media.MediaPlayer;
 
 import java.io.File;
 import java.net.URL;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-public class MyTunesController implements Initializable{
+public class MyTunesController implements Initializable {
     //Table view
     @FXML
     private TableView<Song> tblSongsOnPlaylist;
@@ -44,7 +46,6 @@ public class MyTunesController implements Initializable{
     private TableColumn<Playlist, String> colName, colSongs, colSongsDuration;
 
 
-
     //search field
     @FXML
     private TextField txtSongSearch;
@@ -62,6 +63,11 @@ public class MyTunesController implements Initializable{
     private SongModel songModel;
     private PlaylistModel playlistModel;
 
+    private MediaPlayer mediaPlayer;
+    private int currentSongIndex = 0; // Track the current song being played.
+    private List<Song> songPaths; // List of song file paths.
+    private String folder = "music\\";
+
     private PlaylistManager playlistManager;
 
     public MyTunesController() {
@@ -74,7 +80,7 @@ public class MyTunesController implements Initializable{
 
             songModel = new SongModel();
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             displayError(e);
             e.printStackTrace();
         }
@@ -97,7 +103,6 @@ public class MyTunesController implements Initializable{
         setupEventListeners();
 
 
-
     }
 
     // Formats duration from seconds to a mm:ss string format.
@@ -107,7 +112,7 @@ public class MyTunesController implements Initializable{
         return String.format("%02d:%02d", minutes, remainingSeconds);
     }
 
-    private void setupTableViews(){
+    private void setupTableViews() {
         //setup columns in table view
         colTitle.setCellValueFactory(new PropertyValueFactory<>("Title"));
         colArtist.setCellValueFactory(new PropertyValueFactory<>("Artist"));
@@ -172,7 +177,7 @@ public class MyTunesController implements Initializable{
                     throw new RuntimeException();
                 }
             });
-        }else{ //Displays message when no song is selected
+        } else { //Displays message when no song is selected
             if (selectedSong == null) {
                 //showAlert("No song selected", "Please select a song to update.");
             }
@@ -193,16 +198,50 @@ public class MyTunesController implements Initializable{
         });
     }
 
-    //IMPLEMENT
+
+    //Onplay and onStop actionevents and read songs in song tableveiw
     public void onPlay(ActionEvent actionEvent) {
+        // Retrieve all song paths from the TableView.
+        ObservableList<Song> items = tblSongs.getItems();
+        if (items.isEmpty()) {
+            System.out.println("No songs available to play!");
+            return;
+        }
+        
+        songPaths = items.stream().toList(); // Convert to a List<String>.
+        currentSongIndex = 0; // Reset to the start of the playlist.
 
-        String path = "music/Ariana Grande - Santa Tell Me (Official Video).mp3";
+        playSong(currentSongIndex);
+    }
 
+    private void playSong(int index) {
+        if (index >= songPaths.size()) {
+            System.out.println("End of playlist.");
+            return; // Stop if we reach the end of the playlist.
+        }
+
+        Song Song = songPaths.get(index);
+
+        String path = folder + Song.getFilePath();
+        System.out.println("Now playing: " + path);
+
+        // Create Media and MediaPlayer for the current song.
         Media media = new Media(new File(path).toURI().toString());
-        MediaPlayer mediaPlayer = new MediaPlayer(media);
+        mediaPlayer = new MediaPlayer(media);
+        // Start playback.
         mediaPlayer.play();
 
-        System.out.println("onPlay");
+        // Set callback to play the next song after the current one ends.
+        mediaPlayer.setOnEndOfMedia(() -> {
+            currentSongIndex++;
+            playSong(currentSongIndex);
+        });
+    }
+
+    public void onStop(ActionEvent actionEvent) {
+        if (mediaPlayer != null) {
+            mediaPlayer.pause();
+        }
     }
 
     private void setupEventListeners() {
@@ -213,4 +252,6 @@ public class MyTunesController implements Initializable{
         });
 
     }
+
 }
+

@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" prefHeight="735.0" prefWidth="930.0" spacing="20.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.mytunes.mytunesfinal.GUI.Controller.MyTunesController">
+<VBox alignment="CENTER" prefHeight="735.0" prefWidth="930.0" spacing="20.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.mytunes.mytunesfinal.GUI.Controller.MyTunesController">
    <padding>
       <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
    </padding>
@@ -54,7 +54,7 @@
             <Button layoutX="530.0" layoutY="174.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="34.0" style="-fx-background-color: #69b9e2;" text="⮜" />
             <Button layoutX="320.0" layoutY="640.0" mnemonicParsing="false" style="-fx-background-color: #69b9e2;" text="▲" />
             <Button layoutX="367.0" layoutY="640.0" mnemonicParsing="false" style="-fx-background-color: #69b9e2;" text="▼" />
-            <Button layoutX="121.0" layoutY="34.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="34.0" style="-fx-background-color: #69b9e2;" text="⏸">
+            <Button fx:id="btnStop" layoutX="121.0" layoutY="34.0" mnemonicParsing="false" onAction="#onStop" prefHeight="27.0" prefWidth="34.0" style="-fx-background-color: #69b9e2;" text="⏸">
                <font>
                   <Font size="13.0" />
                </font></Button>
