@@ -25,16 +25,13 @@ import java.util.Optional;
 public class AddUpdateSong {
 
     // Uses boolean to check if you are updating or adding song. if true it updates if false it adds new song.
-    public Optional<Song> showSongDialog(boolean Updating, Song selectedSong) throws Exception {
-
-
-
+    public Optional<Song> showSongDialog(boolean isUpdating, Song selectedSong) throws Exception {
 
         // Creating dialog box
         Dialog<Song> dialog = new Dialog<>();
-        dialog.setTitle(Updating ? "Update Song" : "Add New Song");
+        dialog.setTitle(isUpdating ? "Update Song" : "Add New Song");
 
-        ButtonType addUpdateButtonType = new ButtonType(Updating ? "Update" : "Add", ButtonBar.ButtonData.OK_DONE);
+        ButtonType addUpdateButtonType = new ButtonType(isUpdating ? "Update" : "Add", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(addUpdateButtonType, ButtonType.CANCEL);
 
         GridPane grid = new GridPane();
@@ -45,11 +42,11 @@ public class AddUpdateSong {
         TextField titleField = new TextField();
         titleField.setPromptText("Title");
         TextField artistField = new TextField();
-        artistField.setPromptText("Artist Name");
+        artistField.setPromptText("Artist");
         ComboBox<String> genreComboBox = new ComboBox<>();
         genreComboBox.setPromptText("Select Genre");
-        TextField durationField = new TextField();
-        durationField.setPromptText("Time in Seconds");
+        TextField timeField = new TextField();
+        timeField.setPromptText("Duration in Seconds");
         TextField filePathField = new TextField();
         filePathField.setEditable(false);
 
@@ -59,7 +56,7 @@ public class AddUpdateSong {
         //makes the dropdown empty
         genreComboBox.getItems().clear();
 
-        for (Genre genre : allGenres) {
+        for (Genre genre : allGenres){
             genreComboBox.getItems().add(genre.getGenreName());
         }
 
@@ -70,16 +67,16 @@ public class AddUpdateSong {
         grid.add(new Label("Genre:"), 0, 2);
         grid.add(genreComboBox, 1, 2);
         grid.add(new Label("Duration:"), 0, 3);
-        grid.add(durationField, 1, 3);
+        grid.add(timeField, 1, 3);
         grid.add(new Label("File:"), 0, 4);
         grid.add(filePathField, 1, 4);
 
         // If updating the dialog box will include all the items of the selected song
-        if (Updating && selectedSong != null) {
+        if(isUpdating && selectedSong != null) {
             titleField.setText(selectedSong.getTitle());
             artistField.setText(selectedSong.getArtist());
             genreComboBox.setValue(selectedSong.getGenre());
-            durationField.setText(String.valueOf(selectedSong.getDuration()));
+            timeField.setText(String.valueOf(selectedSong.getDuration()));
             filePathField.setText(selectedSong.getFilePath());
         }
 
@@ -106,7 +103,7 @@ public class AddUpdateSong {
                     titleField.setText(title != null ? title : "");
                     artistField.setText(artist != null ? artist : "");
                     genreComboBox.setValue(""); // Genre is rarely part of the metadata
-                    durationField.setText(String.valueOf((int) duration.toSeconds()));
+                    timeField.setText(String.valueOf((int) duration.toSeconds()));
                 });
             }
         });
@@ -117,7 +114,7 @@ public class AddUpdateSong {
         BooleanBinding anyFieldEmpty = titleField.textProperty().isEmpty()
                 .or(artistField.textProperty().isEmpty())
                 .or(genreComboBox.valueProperty().isNull()).or(genreComboBox.valueProperty().asString().isEmpty())
-                .or(durationField.textProperty().isEmpty())
+                .or(timeField.textProperty().isEmpty())
                 .or(filePathField.textProperty().isEmpty());
 
         // Makes the add/update button invisible if any of the input fields are empty
@@ -128,19 +125,19 @@ public class AddUpdateSong {
         // And inputs the new values based on that
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == addUpdateButtonType) {
-                if (Updating) {
+                if(isUpdating) {
                     return new Song(selectedSong.getId(),
                             artistField.getText(),
                             titleField.getText(),
                             genreComboBox.getValue(),
-                            Integer.parseInt(durationField.getText()),
+                            Integer.parseInt(timeField.getText()),
                             filePathField.getText());
                 } else {
                     return new Song(
                             artistField.getText(),
                             titleField.getText(),
                             genreComboBox.getValue(),
-                            Integer.parseInt(durationField.getText()),
+                            Integer.parseInt(timeField.getText()),
                             filePathField.getText());
                 }
             }

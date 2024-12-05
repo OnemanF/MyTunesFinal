@@ -38,7 +38,15 @@ public class SongManager {
     }
 
     public void updateSongs(Song selectedSong) throws Exception {
-        songDAO.updateSongs(selectedSong);
+        Artist artist = new Artist(-1, selectedSong.getArtist());
+        Genre genre = new Genre(-1, selectedSong.getGenre());
+        artist.setArtistID(artistDAO_DB.getArtistID(selectedSong.getArtist()));
+        genre.setGenreID(genreDAO_DB.getGenreID(selectedSong.getGenre()));
+        if (artist.getArtistID()== -1) {
+            artist = artistDAO_DB.insertArtist(new Artist(-1,selectedSong.getArtist()));
+
+        }
+        songDAO.updateSongs(selectedSong, artist.getArtistID(),genre.getGenreID());
     }
 
     public Song addSong(Song newSong) throws Exception {

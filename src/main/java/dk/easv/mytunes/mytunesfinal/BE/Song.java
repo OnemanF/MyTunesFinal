@@ -80,7 +80,8 @@ public class Song {
     @Override
     public String toString()
     {
-        return id + ": " + title + genre + duration + artist;
+        return id + ": " + title + genre + duration + artist + FilePath;
     }
+
 
 }

@@ -6,6 +6,7 @@ import dk.easv.mytunes.mytunesfinal.BLL.PlaylistManager;
 import dk.easv.mytunes.mytunesfinal.BLL.SongManager;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 
 import java.util.List;
 
@@ -14,6 +15,7 @@ public class PlaylistModel {
     private ObservableList<Playlist> playlist;
     private PlaylistManager playlistManager;
     private ObservableList<Song> playlistSongs = FXCollections.observableArrayList();
+
 
 
     public PlaylistModel() throws Exception {
@@ -64,6 +66,8 @@ public class PlaylistModel {
         }
         playlist.add(newPlaylist);
     }
+
+
 
 
 
