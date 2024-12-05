@@ -56,9 +56,39 @@ public class SongDAO_DB implements ISongDataAccess {
 
 
     @Override
-    public void updateSongs(Song song) throws Exception {
+    public void updateSongs(Song song, int artistID, int genreID) throws Exception {
+        // SQL command
+        String sql = "UPDATE dbo.Songs SET Title = ?, Duration = ?, ArtistID = ?, GenreID = ?, FilePath = ? WHERE SongID = ?";
 
+        System.out.println("Updating song with ID: " + song.getId());
+        System.out.println("ArtistID: " + artistID);
+        System.out.println("GenreID: " + genreID);
+
+
+        try (Connection conn = SongdatabaseConnector.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            // Bind parameters
+            stmt.setString(1, song.getTitle());
+            stmt.setInt(2, song.getDuration());
+            stmt.setInt(3, artistID);
+            stmt.setInt(4, genreID);
+            stmt.setString(5, song.getFilePath());
+            stmt.setInt(6, song.getId());
+
+            stmt.executeUpdate();
+
+
+
+
+            // Run the specified SQL statement
+        } catch (SQLException ex) {
+            // create entry in log file
+            ex.printStackTrace();
+            throw new Exception("Could not update song", ex);
+        }
     }
+
+
 
     @Override
     public void deleteSong(Song song) throws Exception {

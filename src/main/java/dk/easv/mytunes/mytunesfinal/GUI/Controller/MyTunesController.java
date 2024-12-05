@@ -156,7 +156,7 @@ public class MyTunesController implements Initializable{
     }
 
     // Opens a dialog to update selected song.
-    public void UpdateTheSongs(ActionEvent actionEvent) throws Exception {
+    public void updateSong(ActionEvent actionEvent) throws Exception {
         Song selectedSong = tblSongs.getSelectionModel().getSelectedItem();
         tblSongsOnPlaylist.setItems(songModel.getObservableSongs());
         if (selectedSong != null) {
@@ -174,7 +174,7 @@ public class MyTunesController implements Initializable{
             });
         }else{ //Displays message when no song is selected
             if (selectedSong == null) {
-                //showAlert("No song selected", "Please select a song to update.");
+                showAlert("No song selected", "Please select a song to update.");
             }
         }
     }
@@ -213,4 +213,17 @@ public class MyTunesController implements Initializable{
         });
 
     }
+
+
+    // Displays an alert dialog with specified title and content.
+    private void showAlert(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+
+
+
 }
