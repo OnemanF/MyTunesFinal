@@ -80,10 +80,8 @@ public class PlaylistDAO_DB implements IPlaylistDataAccess {
                 "INNER JOIN SongsOnPlaylist sop ON s.SongID = sop.SongID " +
                 "WHERE sop.PlaylistID = ?";*/
 
-        "SELECT s.SongID, s.Title, s.Duration, s.FilePath, a.ArtistName, g.GenreName " +
+        "SELECT s.SongID, s.Title, s.Duration, s.FilePath, s.ArtistName, s.GenreID " +
                 "FROM Song s " +
-                "INNER JOIN Artist a ON s.ArtistID = a.ArtistID " +
-                "INNER JOIN Genre g ON s.GenreID = g.GenreID " +
                 "INNER JOIN SongsOnPlaylist sop ON s.SongID = sop.SongID " +
                 "WHERE sop.PlaylistID = ?";
 
@@ -163,13 +161,12 @@ public class PlaylistDAO_DB implements IPlaylistDataAccess {
 
     }
 
-    public void addSongToPlaylist(int songId, int playlistId) {
-        String sql = "INSERT INTO Playlist (PlaylistID, SongID) VALUES (?, ?)";
+    public void addSongToPlaylist( int playlistId) {
+        String sql = "INSERT INTO Playlist (PlaylistID) VALUES (?)";
 
         try (Connection conn = playlistdatabaseConnector.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, playlistId);
-            stmt.setInt(2, songId);
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

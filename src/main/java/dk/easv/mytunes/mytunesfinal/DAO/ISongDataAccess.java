@@ -13,5 +13,5 @@ public interface ISongDataAccess {
     void deleteSong(Song song) throws Exception;
 
 
-    Song addSong(Song newSong, int artistID, int genreID) throws Exception;
+    Song addSong(Song newSong, String artistName, int genreID) throws Exception;
 }

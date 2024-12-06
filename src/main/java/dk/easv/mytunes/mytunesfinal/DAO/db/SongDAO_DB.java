@@ -97,19 +97,19 @@ public class SongDAO_DB implements ISongDataAccess {
 
 
     @Override
-    public Song addSong(Song song, int artistID, int genreID) throws Exception {
+    public Song addSong(Song song, String artistName, int genreID) throws Exception {
 
         // SQL command
-        String sql = "INSERT INTO dbo.Song (Title, Duration, ArtistID, GenreID, FilePath) VALUES (?, ?, ?, ?, ?);";
+        String sql = "INSERT INTO dbo.Song (Title, Duration, ArtistName, GenreID, FilePath) VALUES (?, ?, ?, ?, ?);";
 
         try (Connection conn = SongdatabaseConnector.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             // Bind parameters
             stmt.setString(1, song.getTitle());
             stmt.setLong(2, song.getDuration());
-            stmt.setInt(3, artistID);
+            stmt.setString(3, artistName);
             stmt.setInt(4, genreID);
-            stmt.setString(3, song.getFilePath());
+            stmt.setString(5, song.getFilePath());
 
             // Run the specified SQL statement
             stmt.executeUpdate();

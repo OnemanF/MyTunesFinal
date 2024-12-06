@@ -85,11 +85,11 @@ public class SongManager {
 
     public Song addSong(Song newSong) throws Exception {
         try {
-            int artistID = ensureArtistExists(newSong.getArtist());
+            String artistName = newSong.getArtist();
             int genreID = ensureGenreExists(newSong.getGenre());
 
             // Add the song via DAO and return the result
-            return songDAO.addSong(newSong, artistID, genreID);
+            return songDAO.addSong(newSong, artistName, genreID);
 
         } catch (Exception e) {
             // Log and rethrow for higher-level handling

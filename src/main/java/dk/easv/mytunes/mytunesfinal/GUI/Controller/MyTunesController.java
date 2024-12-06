@@ -342,7 +342,7 @@ public class MyTunesController implements Initializable {
 
         try {
             // Call the PlaylistModel to handle the addition
-            playlistModel.addSongToPlaylist(selectedSong.getId(), selectedPlaylist.getId());
+            playlistModel.addSongToPlaylist(selectedPlaylist.getId());
             playlistModel.loadSongsForPlaylist(selectedPlaylist.getId()); // Refresh songs for the playlist
             tblSongsOnPlaylist.refresh();
             showInfoAlert("Song Added", "The song has been successfully added to the playlist.");
