@@ -307,6 +307,20 @@ public class MyTunesController implements Initializable {
         }
     }
 
+    public void onNext(ActionEvent actionEvent) {
+        mediaPlayer.stop();
+        currentSongIndex++;
+        playSong(currentSongIndex);
+    }
+
+    public void onPrevious(ActionEvent actionEvent) {
+        mediaPlayer.stop();
+        currentSongIndex--;
+        playSong(currentSongIndex);
+    }
+
+
+
     private void setupEventListeners() {
         tblPlaylist.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection != null) {
