@@ -43,6 +43,9 @@ public class MyTunesController implements Initializable {
     @FXML
     private TextField txtSongSearch;
 
+    @FXML
+    private Label crntTrackTxt;
+
     //buttons
     @FXML
     private Button searchButton, btnNewPlaylist;
@@ -283,6 +286,7 @@ public class MyTunesController implements Initializable {
 
         String path = folder + Song.getFilePath();
         System.out.println("Now playing: " + path);
+        crntTrackTxt.setText("Current Track: " + Song.getTitle() + " - " + Song.getArtist());
 
         // Create Media and MediaPlayer for the current song.
         Media media = new Media(new File(path).toURI().toString());
