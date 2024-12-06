@@ -40,11 +40,11 @@ public class SongManager {
     public void updateSongs(Song selectedSong) throws Exception {
 
         try {
-            int artistID = ensureArtistExists(selectedSong.getArtist());
+            String artistName = selectedSong.getArtist();
             int genreID = ensureGenreExists(selectedSong.getGenre());
 
             // Pass the updated song along with artist and genre IDs to the DAO
-            songDAO.updateSongs(selectedSong, artistID, genreID);
+            songDAO.updateSongs(selectedSong, artistName, genreID);
 
         } catch (Exception e) {
             // Log and rethrow for higher-level handling

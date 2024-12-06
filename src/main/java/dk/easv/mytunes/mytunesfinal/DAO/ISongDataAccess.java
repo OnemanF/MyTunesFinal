@@ -9,7 +9,7 @@ import java.util.List;
 public interface ISongDataAccess {
 
     List<Song> getAllSongs() throws Exception;
-    void updateSongs(Song song, int artistID, int genreID) throws Exception;
+    void updateSongs(Song song, String artistName, int genreID) throws Exception;
     void deleteSong(Song song) throws Exception;
 
 

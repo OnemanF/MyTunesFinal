@@ -25,8 +25,7 @@ public class SongDAO_DB implements ISongDataAccess {
 
             String sql = "SELECT * " +
                     "FROM Song " +
-                    "JOIN Genre ON Song.GenreID = Genre.GenreID " +
-                    "JOIN Artist ON Song.ArtistID = Artist.ArtistID";
+                    "JOIN Genre ON Song.GenreID = Genre.GenreID ";
 
 
             ResultSet rs = stmt.executeQuery(sql);
@@ -56,12 +55,12 @@ public class SongDAO_DB implements ISongDataAccess {
 
 
     @Override
-    public void updateSongs(Song song, int artistID, int genreID) throws Exception {
+    public void updateSongs(Song song, String artistName, int genreID) throws Exception {
         // SQL command
-        String sql = "UPDATE dbo.Song SET Title = ?, Duration = ?, ArtistID = ?, GenreID = ?, FilePath = ? WHERE SongID = ?";
+        String sql = "UPDATE dbo.Song SET Title = ?, Duration = ?, ArtistName = ?, GenreID = ?, FilePath = ? WHERE SongID = ?";
 
         System.out.println("Updating song with ID: " + song.getId());
-        System.out.println("ArtistID: " + artistID);
+        System.out.println("ArtistName: " + artistName);
         System.out.println("GenreID: " + genreID);
 
 
@@ -70,7 +69,7 @@ public class SongDAO_DB implements ISongDataAccess {
             // Bind parameters
             stmt.setString(1, song.getTitle());
             stmt.setInt(2, song.getDuration());
-            stmt.setInt(3, artistID);
+            stmt.setString(3, artistName);
             stmt.setInt(4, genreID);
             stmt.setString(5, song.getFilePath());
             stmt.setInt(6, song.getId());
