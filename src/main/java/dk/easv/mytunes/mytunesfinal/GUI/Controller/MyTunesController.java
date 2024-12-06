@@ -330,5 +330,26 @@ public class MyTunesController implements Initializable {
 
     }
 
+    public void addSongToPlaylist(ActionEvent actionEvent) {
+        // Retrieve the selected song and playlist
+        Song selectedSong = tblSongs.getSelectionModel().getSelectedItem();
+        Playlist selectedPlaylist = tblPlaylist.getSelectionModel().getSelectedItem();
+
+        if (selectedSong == null || selectedPlaylist == null) {
+            showInfoAlert("Selection Required", "Please select both a song and a playlist.");
+            return;
+        }
+
+        try {
+            // Call the PlaylistModel to handle the addition
+            playlistModel.addSongToPlaylist(selectedSong.getId(), selectedPlaylist.getId());
+            playlistModel.loadSongsForPlaylist(selectedPlaylist.getId()); // Refresh songs for the playlist
+            tblSongsOnPlaylist.refresh();
+            showInfoAlert("Song Added", "The song has been successfully added to the playlist.");
+        } catch (Exception e) {
+            showErrorAlert("Error Adding Song", "An error occurred while adding the song to the playlist: " + e.getMessage());
+        }
+    }
+
 }
 

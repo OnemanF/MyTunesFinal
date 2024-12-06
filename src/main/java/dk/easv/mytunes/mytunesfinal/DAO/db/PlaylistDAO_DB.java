@@ -163,7 +163,19 @@ public class PlaylistDAO_DB implements IPlaylistDataAccess {
 
     }
 
+    public void addSongToPlaylist(int songId, int playlistId) {
+        String sql = "INSERT INTO Playlist (PlaylistID, SongID) VALUES (?, ?)";
 
+        try (Connection conn = playlistdatabaseConnector.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, playlistId);
+            stmt.setInt(2, songId);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error adding song to playlist: " + e.getMessage());
+        }
+    }
 
 
 }
