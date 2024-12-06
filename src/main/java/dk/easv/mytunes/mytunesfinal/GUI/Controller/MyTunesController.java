@@ -276,12 +276,12 @@ public class MyTunesController implements Initializable {
         playSong(currentSongIndex);
     }
 
-    private void playSong(int index) {
+    private void playSong(int index)  {
         if (index >= songPaths.size()) {
             System.out.println("End of playlist.");
             return; // Stop if we reach the end of the playlist.
         }
-
+try{
         Song Song = songPaths.get(index);
 
         String path = folder + Song.getFilePath();
@@ -298,7 +298,11 @@ public class MyTunesController implements Initializable {
         mediaPlayer.setOnEndOfMedia(() -> {
             currentSongIndex++;
             playSong(currentSongIndex);
+
         });
+} catch (Exception e) {
+    System.out.println( e.getMessage());
+}
     }
 
     public void onStop(ActionEvent actionEvent) {
