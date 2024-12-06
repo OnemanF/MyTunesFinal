@@ -101,7 +101,7 @@ public class SongDAO_DB implements ISongDataAccess {
     public Song addSong(Song song, int artistID, int genreID) throws Exception {
 
         // SQL command
-        String sql = "INSERT INTO Song (Title, Duration, ArtistID, GenreID, FilePath) VALUES (?, ?, ?, ?, ?);";
+        String sql = "INSERT INTO dbo.Song (Title, Duration, ArtistID, GenreID, FilePath) VALUES (?, ?, ?, ?, ?);";
 
         try (Connection conn = SongdatabaseConnector.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
