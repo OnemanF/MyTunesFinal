@@ -24,20 +24,14 @@ import java.util.ResourceBundle;
 public class MyTunesController implements Initializable {
     //Table view
     @FXML
-    private TableView<Song> tblSongsOnPlaylist;
-    @FXML
-    private TableView<Song> tblSongs;
+    private TableView<Song> tblSongsOnPlaylist, tblSongs;
+
     @FXML
     private TableView<Playlist> tblPlaylist;
     //Table columns
     @FXML
-    private TableColumn<Song, String> colTitle;
-    @FXML
-    private TableColumn<Song, String> colArtist;
-    @FXML
-    private TableColumn<Song, String> colGenre;
-    @FXML
-    private TableColumn<Song, String> colDuration;
+    private TableColumn<Song, String> colTitle, colArtist, colGenre, colDuration;
+
     @FXML
     private TableColumn<Song, String> colSong, colSongsArtist;
 
@@ -45,10 +39,12 @@ public class MyTunesController implements Initializable {
     @FXML
     private TableColumn<Playlist, String> colName, colSongs, colSongsDuration;
 
-
     //search field
     @FXML
     private TextField txtSongSearch;
+
+    @FXML
+    private Label crntTrackTxt;
 
     //buttons
     @FXML
@@ -117,7 +113,6 @@ public class MyTunesController implements Initializable {
         colTitle.setCellValueFactory(new PropertyValueFactory<>("Title"));
         colArtist.setCellValueFactory(new PropertyValueFactory<>("Artist"));
         colGenre.setCellValueFactory(new PropertyValueFactory<>("Genre"));
-        //colDuration.setCellValueFactory(new PropertyValueFactory<>("Duration"));
         colDuration.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(getDurationFormatted(cellData.getValue().getDuration())));
 
 
@@ -126,8 +121,9 @@ public class MyTunesController implements Initializable {
         colSongs.setCellValueFactory(new PropertyValueFactory<>("SongsAmount"));
         colSongsDuration.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(getDurationFormatted(cellData.getValue().getPlaylistTotalDuration())));
 
-
+        //binding songs to song table
         tblSongs.setItems(songModel.getObservableSongs());
+
 
         txtSongSearch.textProperty().addListener((observableValue, oldValue, newValue) -> {
             try {
@@ -145,6 +141,7 @@ public class MyTunesController implements Initializable {
         tblPlaylist.refresh();
     }
 
+    //creating new playlist
     public void createNewPlaylist(ActionEvent actionEvent) {
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("Create New Playlist");
@@ -163,6 +160,30 @@ public class MyTunesController implements Initializable {
     // Opens a dialog to update selected song.
     public void updateSong(ActionEvent actionEvent) throws Exception {
         Song selectedSong = tblSongs.getSelectionModel().getSelectedItem();
+
+        if (selectedSong != null) {
+            try {
+                // Opens a dialog with the selected song for editing.
+                Optional<Song> result = dialogboxes.showSongDialog(true, selectedSong);
+
+                result.ifPresent(updatedSong -> {
+                    try {
+                        songModel.updateSong(updatedSong); // Update in the model
+                        tblSongs.refresh(); // Refresh the table displaying songs
+                        if (tblSongsOnPlaylist.getItems().contains(updatedSong)) {
+                            tblSongsOnPlaylist.refresh(); // Refresh playlist table if needed
+                        }
+                    } catch (Exception e) {
+                        showErrorAlert("Update Error", "Failed to update the song: " + e.getMessage());
+                    }
+                });
+            } catch (Exception e) {
+                showErrorAlert("Dialog Error", "Failed to open the song dialog: " + e.getMessage());
+            }
+        } else {
+            showInfoAlert("No Song Selected", "Please select a song to update.");
+        }
+        /*
         tblSongsOnPlaylist.setItems(songModel.getObservableSongs());
         if (selectedSong != null) {
             // If update is pressed the boolean "isUpdating" returns true in order to differentiate between update and create.
@@ -182,22 +203,47 @@ public class MyTunesController implements Initializable {
                 //showAlert("No song selected", "Please select a song to update.");
             }
         }
+          */
+
     }
 
     // Opens a dialog to create new songs.
     public void addSong(ActionEvent actionEvent) throws Exception {
+        try {
+            // Attempt to show the dialog and get the result
+            Optional<Song> result = dialogboxes.showSongDialog(false, null);
 
-        Optional<Song> result = dialogboxes.showSongDialog(false, null);
-
-        result.ifPresent(newSong -> {
-            try {
-                songModel.addSong(newSong);
-            } catch (Exception e) {
-                e.printStackTrace(); // Or handle the exception in another way
-            }
-        });
+            // Handle the result, if present
+            result.ifPresent(newSong -> {
+                try {
+                    songModel.addSong(newSong); // Add the new song to the model
+                    tblSongs.refresh(); // Refresh the table displaying songs
+                } catch (Exception e) {
+                    showErrorAlert("Creation Error", "Failed to add the new song: " + e.getMessage());
+                }
+            });
+        } catch (Exception e) {
+            showErrorAlert("Dialog Error", "Failed to open the song dialog: " + e.getMessage());
+        }
     }
 
+
+
+    // Helper methods for displaying alerts
+    private void showInfoAlert(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(content);
+        alert.showAndWait();
+    }
+
+    private void showErrorAlert(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(title);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
 
     //Onplay and onStop actionevents and read songs in song tableveiw
     public void onPlay(ActionEvent actionEvent) {
@@ -220,7 +266,7 @@ public class MyTunesController implements Initializable {
                 System.out.println("Already playing, moron.");
                 return;
             }
-            
+
 
         }
         
@@ -240,6 +286,7 @@ public class MyTunesController implements Initializable {
 
         String path = folder + Song.getFilePath();
         System.out.println("Now playing: " + path);
+        crntTrackTxt.setText("Current Track: " + Song.getTitle() + " - " + Song.getArtist());
 
         // Create Media and MediaPlayer for the current song.
         Media media = new Media(new File(path).toURI().toString());
@@ -259,6 +306,20 @@ public class MyTunesController implements Initializable {
             mediaPlayer.pause();
         }
     }
+
+    public void onNext(ActionEvent actionEvent) {
+        mediaPlayer.stop();
+        currentSongIndex++;
+        playSong(currentSongIndex);
+    }
+
+    public void onPrevious(ActionEvent actionEvent) {
+        mediaPlayer.stop();
+        currentSongIndex--;
+        playSong(currentSongIndex);
+    }
+
+
 
     private void setupEventListeners() {
         tblPlaylist.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
