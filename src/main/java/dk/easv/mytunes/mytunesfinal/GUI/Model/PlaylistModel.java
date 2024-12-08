@@ -59,21 +59,40 @@ public class PlaylistModel {
 
     public void createPlaylist(String playlistName) {
         Playlist newPlaylist = null;
+
+        // Check if the playlist name is valid before proceeding
+        if (playlistName != null && !playlistName.trim().isEmpty()) {
+            try {
+                // Create the new playlist using playlistManager
+                newPlaylist = playlistManager.createPlaylist(playlistName);
+
+                // Check if newPlaylist is not null before adding it to the list
+                if (newPlaylist != null) {
+                    playlist.add(newPlaylist);
+                } else {
+                    System.out.println("Failed to create playlist.");
+                }
+            } catch (Exception e) {
+                // Log or handle the exception properly
+                System.err.println("Error creating playlist: " + e.getMessage());
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("Invalid playlist name.");
+        }
+        /*
         try {
             newPlaylist = playlistManager.createPlaylist(playlistName);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
         playlist.add(newPlaylist);
+
+         */
     }
 
-
-
-
-
-
-
-
-
-
+    public void addSongToPlaylist( int playlistId) throws Exception {
+        // Delegate to the PlaylistManager
+        playlistManager.addSongToPlaylist( playlistId);
+    }
 }

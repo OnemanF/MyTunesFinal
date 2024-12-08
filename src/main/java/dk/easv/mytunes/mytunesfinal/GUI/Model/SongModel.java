@@ -27,7 +27,9 @@ public class SongModel {
         List<Song> searchResult = songManager.songSearch(query);
         songsToBeViewed.clear();
         songsToBeViewed.addAll(searchResult);
-    }
+
+        }
+
 
     public void updateSong(Song updatedSong) throws Exception {
         // update song in DAL layer (through the layers)
@@ -44,6 +46,8 @@ public class SongModel {
             }
         }
     }
+
+
 
     public void addSong(Song newSong) throws Exception {
         Song s = songManager.addSong(newSong);

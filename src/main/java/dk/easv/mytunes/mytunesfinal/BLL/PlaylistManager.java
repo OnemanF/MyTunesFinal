@@ -37,4 +37,9 @@ public class PlaylistManager {
         return playlistDAO.createPlaylist(newPlaylist);
     }
 
+    public void addSongToPlaylist( int playlistId) throws Exception {
+        // Delegate to the DAO layer
+        playlistDAO_DB.addSongToPlaylist( playlistId);
+    }
+
 }

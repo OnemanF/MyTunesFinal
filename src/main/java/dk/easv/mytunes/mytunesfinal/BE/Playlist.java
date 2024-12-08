@@ -2,25 +2,25 @@ package dk.easv.mytunes.mytunesfinal.BE;
 
 public class Playlist {
 
-    private int id;
+    private int PlaylistID;
     private String name;
     private int playlistTotalDuration;
-    private int totalSongs;
+    private int SongsAmount;
     private Integer numberOfSongs;
 
-    public Playlist(int id, String name, int playlistTotalDuration, int totalSongs) {
-        this.id = id;
+    public Playlist(int PlaylistID, String name, int playlistTotalDuration, int SongsAmount) {
+        this.PlaylistID = PlaylistID;
         this.name = name;
         this.playlistTotalDuration = playlistTotalDuration;
-        this.totalSongs = totalSongs;
+        this.SongsAmount = SongsAmount;
     }
 
     public int getId() {
-        return id;
+        return PlaylistID;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setId(int PlaylistID) {
+        this.PlaylistID = PlaylistID;
     }
 
     public String getName() {
@@ -47,12 +47,12 @@ public class Playlist {
         this.playlistTotalDuration = playlistTotalDuration;
     }
 
-    public int getTotalSongs() {
-        return totalSongs;
+    public int getSongsAmount() {
+        return SongsAmount;
     }
 
-    public void setTotalSongs(int totalSongs) {
-        this.totalSongs = totalSongs;
+    public void setSongsAmount(int totalSongs) {
+        this.SongsAmount = totalSongs;
     }
 
 
