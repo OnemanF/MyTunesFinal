@@ -90,4 +90,9 @@ public class PlaylistModel {
 
          */
     }
+
+    public void addSongToPlaylist( int playlistId) throws Exception {
+        // Delegate to the PlaylistManager
+        playlistManager.addSongToPlaylist( playlistId);
+    }
 }

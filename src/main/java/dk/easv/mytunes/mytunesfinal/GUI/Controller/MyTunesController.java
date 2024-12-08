@@ -276,12 +276,12 @@ public class MyTunesController implements Initializable {
         playSong(currentSongIndex);
     }
 
-    private void playSong(int index) {
+    private void playSong(int index)  {
         if (index >= songPaths.size()) {
             System.out.println("End of playlist.");
             return; // Stop if we reach the end of the playlist.
         }
-
+try{
         Song Song = songPaths.get(index);
 
         String path = folder + Song.getFilePath();
@@ -298,7 +298,11 @@ public class MyTunesController implements Initializable {
         mediaPlayer.setOnEndOfMedia(() -> {
             currentSongIndex++;
             playSong(currentSongIndex);
+
         });
+} catch (Exception e) {
+    System.out.println( e.getMessage());
+}
     }
 
     public void onStop(ActionEvent actionEvent) {
@@ -328,6 +332,27 @@ public class MyTunesController implements Initializable {
             }
         });
 
+    }
+
+    public void addSongToPlaylist(ActionEvent actionEvent) {
+        // Retrieve the selected song and playlist
+        Song selectedSong = tblSongs.getSelectionModel().getSelectedItem();
+        Playlist selectedPlaylist = tblPlaylist.getSelectionModel().getSelectedItem();
+
+        if (selectedSong == null || selectedPlaylist == null) {
+            showInfoAlert("Selection Required", "Please select both a song and a playlist.");
+            return;
+        }
+
+        try {
+            // Call the PlaylistModel to handle the addition
+            playlistModel.addSongToPlaylist(selectedPlaylist.getId());
+            playlistModel.loadSongsForPlaylist(selectedPlaylist.getId()); // Refresh songs for the playlist
+            tblSongsOnPlaylist.refresh();
+            showInfoAlert("Song Added", "The song has been successfully added to the playlist.");
+        } catch (Exception e) {
+            showErrorAlert("Error Adding Song", "An error occurred while adding the song to the playlist: " + e.getMessage());
+        }
     }
 
 }

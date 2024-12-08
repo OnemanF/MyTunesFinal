@@ -127,15 +127,15 @@ public class AddUpdateSong {
             if (dialogButton == addUpdateButtonType) {
                 if(isUpdating) {
                     return new Song(selectedSong.getId(),
-                            artistField.getText(),
                             titleField.getText(),
+                            artistField.getText(),
                             genreComboBox.getValue(),
                             Integer.parseInt(timeField.getText()),
                             filePathField.getText());
                 } else {
                     return new Song(
-                            artistField.getText(),
                             titleField.getText(),
+                            artistField.getText(),
                             genreComboBox.getValue(),
                             Integer.parseInt(timeField.getText()),
                             filePathField.getText());
