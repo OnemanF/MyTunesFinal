@@ -28,7 +28,7 @@ public class PlaylistModel {
         return playlist;
     }
 
-    public void loadInPlaylists() {
+    public void loadPlaylists() {
         List<Playlist> playlistData = null;
         try {
             playlistData = playlistManager.getAllPlaylists();

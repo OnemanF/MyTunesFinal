@@ -20,11 +20,13 @@ public class PlaylistDAO_DB implements IPlaylistDataAccess {
     @Override
     public List<Playlist> getAllPlaylists() throws Exception {
         List<Playlist> allPlaylists = new ArrayList<>();
-        String sql = "SELECT playlist.PlaylistID, playlist.Name, COUNT(sop.SongID) as SongsAmount, coalesce(SUM(Song.Duration),0) as SongsDuration\n" +
-                "From Playlist playlist\n" +
-                "Left JOIN SongsOnPlaylist sop ON playlist.PlaylistID = sop.PlaylistID\n" +
-                "Left JOIN Song song ON sop.SongID = song.SongID\n" +
-                "GROUP BY playlist.PlaylistID, playlist.Name";
+        String sql = "SELECT p.PlaylistID, p.Name, " +
+                "COUNT(DISTINCT sop.SongID) AS SongsAmount\n," +
+                "COALESCE(SUM(s.Duration), 0) AS SongsDuration\n" +
+                "FROM Playlist p\n" +
+                "LEFT JOIN SongsOnPlaylist sop ON p.PlaylistID = sop.PlaylistID\n" +
+                "LEFT JOIN Song s ON sop.SongID = s.SongID\n" +
+                "GROUP BY p.PlaylistID, p.Name";
 
 
         try (Connection conn = playlistdatabaseConnector.getConnection();
@@ -74,17 +76,12 @@ public class PlaylistDAO_DB implements IPlaylistDataAccess {
 
     public List<Song> getSongsForPlaylist(int playlistID) {
         List<Song> songs = new ArrayList<>();
-        String sql = /*" SELECT s.SongID, s.Title, s.Duration, s.FilePath " +
-                "FROM Songs s " +
-
-                "INNER JOIN SongsOnPlaylist sop ON s.SongID = sop.SongID " +
-                "WHERE sop.PlaylistID = ?";*/
-
-        "SELECT s.SongID, s.Title, s.Duration, s.FilePath, s.ArtistName, s.GenreID " +
+        String sql =
+                "SELECT s.SongID, s.Title, s.ArtistName, s.GenreID, s.Duration, s.FilePath " +
                 "FROM Song s " +
                 "INNER JOIN SongsOnPlaylist sop ON s.SongID = sop.SongID " +
                 "INNER JOIN Genre g ON s.GenreID = g.GenreID" +
-                "WHERE sop.PlaylistID = ?";
+                " WHERE sop.PlaylistID = ?";
 
         try (Connection conn = playlistdatabaseConnector.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
