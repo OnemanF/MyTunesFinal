@@ -5,6 +5,9 @@ import dk.easv.mytunes.mytunesfinal.BE.Song;
 import dk.easv.mytunes.mytunesfinal.BLL.PlaylistManager;
 import dk.easv.mytunes.mytunesfinal.GUI.Model.PlaylistModel;
 import dk.easv.mytunes.mytunesfinal.GUI.Model.SongModel;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -16,6 +19,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.util.Duration;
 
 import java.io.File;
 import java.net.URL;
@@ -54,6 +58,10 @@ public class MyTunesController implements Initializable {
     //slider
     @FXML
     private Slider volumeSlider;
+
+    //progressbar
+    @FXML
+    private ProgressBar progressBar;
 
     //buttons
     @FXML
@@ -303,6 +311,7 @@ try{
         // Start playback.
         mediaPlayer.play();
         setupVolume();
+        setupProgressBar();
 
         // Set callback to play the next song after the current one ends.
         mediaPlayer.setOnEndOfMedia(() -> {
@@ -379,6 +388,27 @@ try{
             });
         }
     }
+
+    public void setupProgressBar(){
+        progressBar.setProgress(mediaPlayer.getCurrentTime().toSeconds() / 100);
+
+        // Create a Timeline to update the ProgressBar every 100ms
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.seconds(0.1), e -> {
+                    // Calculate the progress based on current time and total duration
+                    double currentTime = mediaPlayer.getCurrentTime().toSeconds();
+                    double totalDuration = mediaPlayer.getTotalDuration().toSeconds();
+
+                    // Set the progress to the ratio of current time over total duration
+                    if (totalDuration > 0) {
+                        progressBar.setProgress(currentTime / totalDuration);
+                    }
+                })
+        );
+        timeline.setCycleCount(Timeline.INDEFINITE); // Keep updating indefinitely
+        timeline.play(); // Start the timeline
+    }
+
 
     @FXML
     private void deletePlaylist(ActionEvent actionEvent) {
