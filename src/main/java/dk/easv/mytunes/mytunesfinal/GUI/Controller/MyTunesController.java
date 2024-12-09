@@ -5,6 +5,9 @@ import dk.easv.mytunes.mytunesfinal.BE.Song;
 import dk.easv.mytunes.mytunesfinal.BLL.PlaylistManager;
 import dk.easv.mytunes.mytunesfinal.GUI.Model.PlaylistModel;
 import dk.easv.mytunes.mytunesfinal.GUI.Model.SongModel;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -16,6 +19,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.util.Duration;
 
 import java.io.File;
 import java.net.URL;
@@ -54,6 +58,10 @@ public class MyTunesController implements Initializable {
     //slider
     @FXML
     private Slider volumeSlider;
+
+    //progressbar
+    @FXML
+    private ProgressBar progressBar;
 
     //buttons
     @FXML
@@ -104,7 +112,7 @@ public class MyTunesController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
 
         setupTableViews();
-        loadPlaylists();
+        loadInPlaylists();
         setupEventListeners();
 
 
@@ -144,7 +152,11 @@ public class MyTunesController implements Initializable {
         });
     }
 
-
+    // Loads playlists into the table view.
+    private void loadInPlaylists() {
+        playlistModel.loadInPlaylists();
+        tblPlaylist.refresh();
+    }
 
     //creating new playlist
     public void createNewPlaylist(ActionEvent actionEvent) {
@@ -155,7 +167,7 @@ public class MyTunesController implements Initializable {
         result.ifPresent(playlistName -> {
             try {
                 playlistModel.createPlaylist(playlistName);
-                loadPlaylists(); // Reload or refresh the list
+                loadInPlaylists(); // Reload or refresh the list
             } catch (Exception e) {
                 e.printStackTrace(); // Or handle this more gracefully
             }
@@ -299,6 +311,7 @@ try{
         // Start playback.
         mediaPlayer.play();
         setupVolume();
+        setupProgressBar();
 
         // Set callback to play the next song after the current one ends.
         mediaPlayer.setOnEndOfMedia(() -> {
@@ -341,30 +354,48 @@ try{
     }
 
     public void addSongToPlaylist(ActionEvent actionEvent) {
-        // Retrieve the selected song and playlist
-        Song selectedSong = tblSongs.getSelectionModel().getSelectedItem();
-        Playlist selectedPlaylist = tblPlaylist.getSelectionModel().getSelectedItem();
-
-        if (selectedSong == null || selectedPlaylist == null) {
-            showInfoAlert("Selection Required", "Please select both a song and a playlist.");
-            return;
-        }
-
         try {
-            // Call the PlaylistModel to handle the addition
-            playlistModel.addSongToPlaylist(selectedPlaylist.getId());
-            playlistModel.loadSongsForPlaylist(selectedPlaylist.getId()); // Refresh songs for the playlist
-            tblSongsOnPlaylist.refresh();
+            // Retrieve and validate the selected song and playlist
+            Song selectedSong = getSelectedSong();
+            Playlist selectedPlaylist = getSelectedPlaylist();
+
+            // Add the song to the playlist
+            playlistModel.addSongToPlaylist(selectedPlaylist.getId(), selectedSong.getId());
+
+            // Refresh the playlist view
+            refreshPlaylistView(selectedPlaylist);
+
+            // Notify the user
             showInfoAlert("Song Added", "The song has been successfully added to the playlist.");
+        } catch (IllegalArgumentException e) {
+            showInfoAlert("Selection Required", e.getMessage());
         } catch (Exception e) {
             showErrorAlert("Error Adding Song", "An error occurred while adding the song to the playlist: " + e.getMessage());
         }
     }
 
-    public void loadPlaylists() {
-        playlistModel.loadPlaylists();
-        tblPlaylist.refresh();
+    // Helper method to retrieve the selected song
+    private Song getSelectedSong() {
+        Song selectedSong = tblSongs.getSelectionModel().getSelectedItem();
+        if (selectedSong == null) {
+            throw new IllegalArgumentException("Please select a song.");
+        }
+        return selectedSong;
+    }
 
+    // Helper method to retrieve the selected playlist
+    private Playlist getSelectedPlaylist() {
+        Playlist selectedPlaylist = tblPlaylist.getSelectionModel().getSelectedItem();
+        if (selectedPlaylist == null) {
+            throw new IllegalArgumentException("Please select a playlist.");
+        }
+        return selectedPlaylist;
+    }
+
+    // Helper method to refresh the playlist view
+    private void refreshPlaylistView(Playlist selectedPlaylist) {
+        playlistModel.loadSongsForPlaylist(selectedPlaylist.getId()); // Refresh songs for the playlist
+        tblSongsOnPlaylist.refresh();
     }
 
 
@@ -381,6 +412,27 @@ try{
             });
         }
     }
+
+    public void setupProgressBar(){
+        progressBar.setProgress(mediaPlayer.getCurrentTime().toSeconds() / 100);
+
+        // Create a Timeline to update the ProgressBar every 100ms
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.seconds(0.1), e -> {
+                    // Calculate the progress based on current time and total duration
+                    double currentTime = mediaPlayer.getCurrentTime().toSeconds();
+                    double totalDuration = mediaPlayer.getTotalDuration().toSeconds();
+
+                    // Set the progress to the ratio of current time over total duration
+                    if (totalDuration > 0) {
+                        progressBar.setProgress(currentTime / totalDuration);
+                    }
+                })
+        );
+        timeline.setCycleCount(Timeline.INDEFINITE); // Keep updating indefinitely
+        timeline.play(); // Start the timeline
+    }
+
 
     @FXML
     private void deletePlaylist(ActionEvent actionEvent) {
@@ -432,8 +484,5 @@ try{
             showInfoAlert("No Song Selected", "Please select a playlist to delete.");
         }
     }
-
-
-
 }
 

@@ -30,4 +30,8 @@ public class Genre {
         this.genreName = genreName;
     }
 
+    @Override
+    public String toString() {
+        return genreName;
+    }
 }
