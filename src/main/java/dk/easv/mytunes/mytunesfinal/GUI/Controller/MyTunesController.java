@@ -3,6 +3,7 @@ package dk.easv.mytunes.mytunesfinal.GUI.Controller;
 import dk.easv.mytunes.mytunesfinal.BE.Playlist;
 import dk.easv.mytunes.mytunesfinal.BE.Song;
 import dk.easv.mytunes.mytunesfinal.BLL.PlaylistManager;
+import dk.easv.mytunes.mytunesfinal.DAO.db.PlaylistDAO_DB;
 import dk.easv.mytunes.mytunesfinal.GUI.Model.PlaylistModel;
 import dk.easv.mytunes.mytunesfinal.GUI.Model.SongModel;
 import javafx.animation.KeyFrame;
@@ -11,6 +12,7 @@ import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -22,6 +24,7 @@ import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
@@ -39,7 +42,7 @@ public class MyTunesController implements Initializable {
     private TableColumn<Song, String> colTitle, colArtist, colGenre, colDuration;
 
     @FXML
-    private TableColumn<Song, String> colSong, colSongsArtist;
+    private TableColumn<Song, String> colTitleOnplaylist, colSongsArtist;
 
     @FXML
     private Button deleteSong;
@@ -81,6 +84,10 @@ public class MyTunesController implements Initializable {
     private List<Song> songPaths; // List of song file paths.
     private String folder = "music\\";
 
+
+    private final ObservableList<Song> songsOnPlaylist = FXCollections.observableArrayList();
+    private PlaylistDAO_DB playlistDAO;
+
     private PlaylistManager playlistManager;
 
     public MyTunesController() {
@@ -89,7 +96,7 @@ public class MyTunesController implements Initializable {
 
             this.playlistModel = new PlaylistModel();
             playlistManager = new PlaylistManager();
-
+            playlistDAO = new PlaylistDAO_DB();
 
             songModel = new SongModel();
 
@@ -114,9 +121,10 @@ public class MyTunesController implements Initializable {
         setupTableViews();
         loadPlaylists();
         setupEventListeners();
-
-
+        setupPlaylistSelectionListener();
     }
+
+
 
     // Formats duration from seconds to a mm:ss string format.
     public String getDurationFormatted(int seconds) {
@@ -126,13 +134,20 @@ public class MyTunesController implements Initializable {
     }
 
     private void setupTableViews() {
-        //setup columns in table view
+
+        colTitleOnplaylist.setCellValueFactory(new PropertyValueFactory<>("Title"));
+        colSongsArtist.setCellValueFactory(new PropertyValueFactory<>("Artist"));
+
+        // Binding songs to tblSongsOnPlaylist
+        tblSongsOnPlaylist.setItems(songsOnPlaylist);
+
+        // song TableView columns setup
         colTitle.setCellValueFactory(new PropertyValueFactory<>("Title"));
         colArtist.setCellValueFactory(new PropertyValueFactory<>("Artist"));
         colGenre.setCellValueFactory(new PropertyValueFactory<>("Genre"));
         colDuration.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(getDurationFormatted(cellData.getValue().getDuration())));
 
-
+        // Playlist TableView columns setup
         tblPlaylist.setItems(playlistModel.getPlaylists());
         colName.setCellValueFactory(new PropertyValueFactory<>("Name"));
         colSongs.setCellValueFactory(new PropertyValueFactory<>("SongsAmount"));
@@ -148,6 +163,18 @@ public class MyTunesController implements Initializable {
             } catch (Exception e) {
                 displayError(e);
                 e.printStackTrace();
+            }
+        });
+    }
+
+    private void setupPlaylistSelectionListener() {
+        // Add selection listener for playlist TableView
+        tblPlaylist.setOnMouseClicked(event -> {
+            Playlist selectedPlaylist = tblPlaylist.getSelectionModel().getSelectedItem();
+            if (selectedPlaylist != null) {
+                int playlistID = selectedPlaylist.getId();
+                List<Song> fetchedSongs = playlistDAO.getSongsForPlaylist(playlistID);
+                songsOnPlaylist.setAll(fetchedSongs);
             }
         });
     }
