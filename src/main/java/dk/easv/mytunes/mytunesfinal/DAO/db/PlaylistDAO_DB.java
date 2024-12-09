@@ -80,10 +80,12 @@ public class PlaylistDAO_DB implements IPlaylistDataAccess {
                 "INNER JOIN SongsOnPlaylist sop ON s.SongID = sop.SongID " +
                 "WHERE sop.PlaylistID = ?";*/
 
-        "SELECT s.SongID, s.Title, s.Duration, s.FilePath, s.ArtistName, s.GenreID " +
-                "FROM Song s " +
-                "INNER JOIN SongsOnPlaylist sop ON s.SongID = sop.SongID " +
-                "WHERE sop.PlaylistID = ?";
+                "SELECT s.SongID, s.Title, s.Duration, s.FilePath, s.ArtistName, g.GenreName " +
+                        "FROM Song s " +
+                        "JOIN SongsOnPlaylist sop ON s.SongID = sop.SongID " +
+                        "JOIN Genre g ON s.GenreID = g.GenreID " +
+                        "WHERE sop.PlaylistID = ?";
+
 
         try (Connection conn = playlistdatabaseConnector.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -93,16 +95,14 @@ public class PlaylistDAO_DB implements IPlaylistDataAccess {
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
 
-                    int id = rs.getInt("SongID");
+                    int songID = rs.getInt("SongID");
                     String title = rs.getString("Title");
                     String artistName = rs.getString("ArtistName");
                     String genreName = rs.getString("GenreName");
                     int duration = rs.getInt("Duration");
                     String filePath = rs.getString("FilePath");
 
-
-
-                    Song song = new Song(id, title, artistName, genreName, duration, filePath);
+                    Song song = new Song(songID, title, artistName, genreName, duration, filePath);
                     songs.add(song);
                 }
             }
@@ -161,18 +161,35 @@ public class PlaylistDAO_DB implements IPlaylistDataAccess {
 
     }
 
-    public void addSongToPlaylist( int playlistId) {
-        String sql = "INSERT INTO Playlist (PlaylistID) VALUES (?)";
+    public void addSongToPlaylist(int playlistId, int songId) {
+        String sql = "INSERT INTO SongsOnPlaylist (PlaylistID, SongID) VALUES (?, ?)";
 
         try (Connection conn = playlistdatabaseConnector.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
+
             stmt.setInt(1, playlistId);
+            stmt.setInt(2, songId);
+
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException("Error adding song to playlist: " + e.getMessage());
         }
     }
+    public void deletePlaylist(Playlist playlist) throws Exception {
+        String sql = "DELETE FROM Playlist WHERE PlaylistID = ?";
 
+        try (Connection conn = playlistdatabaseConnector.getConnection();
+        PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, playlist.getId()); //Sætter playlist ID som parameter i SQL-forespørgslen
+
+            pstmt.executeUpdate(); //udfører sletning
+        }
+        catch (SQLException ex) {
+            ex.printStackTrace();
+            throw new RuntimeException("Error deleting playlist: " + ex.getMessage());
+        }
+    }
 
 }

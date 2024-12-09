@@ -28,7 +28,7 @@ public class PlaylistModel {
         return playlist;
     }
 
-    public void loadInPlaylists() {
+    public void loadPlaylists() {
         List<Playlist> playlistData = null;
         try {
             playlistData = playlistManager.getAllPlaylists();
@@ -91,8 +91,8 @@ public class PlaylistModel {
          */
     }
 
-    public void addSongToPlaylist( int playlistId) throws Exception {
+    public void addSongToPlaylist( int playlistId, int songId) throws Exception {
         // Delegate to the PlaylistManager
-        playlistManager.addSongToPlaylist( playlistId);
+        playlistManager.addSongToPlaylist(playlistId, songId);
     }
 }

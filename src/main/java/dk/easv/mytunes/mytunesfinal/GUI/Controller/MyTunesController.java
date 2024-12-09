@@ -3,9 +3,16 @@ package dk.easv.mytunes.mytunesfinal.GUI.Controller;
 import dk.easv.mytunes.mytunesfinal.BE.Playlist;
 import dk.easv.mytunes.mytunesfinal.BE.Song;
 import dk.easv.mytunes.mytunesfinal.BLL.PlaylistManager;
+import dk.easv.mytunes.mytunesfinal.DAO.db.PlaylistDAO_DB;
 import dk.easv.mytunes.mytunesfinal.GUI.Model.PlaylistModel;
 import dk.easv.mytunes.mytunesfinal.GUI.Model.SongModel;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.application.Platform;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -14,8 +21,10 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.util.Duration;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
@@ -33,7 +42,10 @@ public class MyTunesController implements Initializable {
     private TableColumn<Song, String> colTitle, colArtist, colGenre, colDuration;
 
     @FXML
-    private TableColumn<Song, String> colSong, colSongsArtist;
+    private TableColumn<Song, String> colTitleOnplaylist, colSongsArtist;
+
+    @FXML
+    private Button deleteSong;
 
     //playlist table
     @FXML
@@ -45,6 +57,14 @@ public class MyTunesController implements Initializable {
 
     @FXML
     private Label crntTrackTxt;
+
+    //slider
+    @FXML
+    private Slider volumeSlider;
+
+    //progressbar
+    @FXML
+    private ProgressBar progressBar;
 
     //buttons
     @FXML
@@ -64,6 +84,10 @@ public class MyTunesController implements Initializable {
     private List<Song> songPaths; // List of song file paths.
     private String folder = "music\\";
 
+
+    private final ObservableList<Song> songsOnPlaylist = FXCollections.observableArrayList();
+    private PlaylistDAO_DB playlistDAO;
+
     private PlaylistManager playlistManager;
 
     public MyTunesController() {
@@ -72,7 +96,7 @@ public class MyTunesController implements Initializable {
 
             this.playlistModel = new PlaylistModel();
             playlistManager = new PlaylistManager();
-
+            playlistDAO = new PlaylistDAO_DB();
 
             songModel = new SongModel();
 
@@ -95,11 +119,12 @@ public class MyTunesController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
 
         setupTableViews();
-        loadInPlaylists();
+        loadPlaylists();
         setupEventListeners();
-
-
+        setupPlaylistSelectionListener();
     }
+
+
 
     // Formats duration from seconds to a mm:ss string format.
     public String getDurationFormatted(int seconds) {
@@ -109,13 +134,20 @@ public class MyTunesController implements Initializable {
     }
 
     private void setupTableViews() {
-        //setup columns in table view
+
+        colTitleOnplaylist.setCellValueFactory(new PropertyValueFactory<>("Title"));
+        colSongsArtist.setCellValueFactory(new PropertyValueFactory<>("Artist"));
+
+        // Binding songs to tblSongsOnPlaylist
+        tblSongsOnPlaylist.setItems(songsOnPlaylist);
+
+        // song TableView columns setup
         colTitle.setCellValueFactory(new PropertyValueFactory<>("Title"));
         colArtist.setCellValueFactory(new PropertyValueFactory<>("Artist"));
         colGenre.setCellValueFactory(new PropertyValueFactory<>("Genre"));
         colDuration.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(getDurationFormatted(cellData.getValue().getDuration())));
 
-
+        // Playlist TableView columns setup
         tblPlaylist.setItems(playlistModel.getPlaylists());
         colName.setCellValueFactory(new PropertyValueFactory<>("Name"));
         colSongs.setCellValueFactory(new PropertyValueFactory<>("SongsAmount"));
@@ -135,9 +167,21 @@ public class MyTunesController implements Initializable {
         });
     }
 
+    private void setupPlaylistSelectionListener() {
+        // Add selection listener for playlist TableView
+        tblPlaylist.setOnMouseClicked(event -> {
+            Playlist selectedPlaylist = tblPlaylist.getSelectionModel().getSelectedItem();
+            if (selectedPlaylist != null) {
+                int playlistID = selectedPlaylist.getId();
+                List<Song> fetchedSongs = playlistDAO.getSongsForPlaylist(playlistID);
+                songsOnPlaylist.setAll(fetchedSongs);
+            }
+        });
+    }
+
     // Loads playlists into the table view.
-    private void loadInPlaylists() {
-        playlistModel.loadInPlaylists();
+    private void loadPlaylists() {
+        playlistModel.loadPlaylists();
         tblPlaylist.refresh();
     }
 
@@ -150,7 +194,7 @@ public class MyTunesController implements Initializable {
         result.ifPresent(playlistName -> {
             try {
                 playlistModel.createPlaylist(playlistName);
-                loadInPlaylists(); // Reload or refresh the list
+                loadPlaylists(); // Reload or refresh the list
             } catch (Exception e) {
                 e.printStackTrace(); // Or handle this more gracefully
             }
@@ -293,6 +337,8 @@ try{
         mediaPlayer = new MediaPlayer(media);
         // Start playback.
         mediaPlayer.play();
+        setupVolume();
+        setupProgressBar();
 
         // Set callback to play the next song after the current one ends.
         mediaPlayer.setOnEndOfMedia(() -> {
@@ -335,25 +381,135 @@ try{
     }
 
     public void addSongToPlaylist(ActionEvent actionEvent) {
-        // Retrieve the selected song and playlist
-        Song selectedSong = tblSongs.getSelectionModel().getSelectedItem();
-        Playlist selectedPlaylist = tblPlaylist.getSelectionModel().getSelectedItem();
-
-        if (selectedSong == null || selectedPlaylist == null) {
-            showInfoAlert("Selection Required", "Please select both a song and a playlist.");
-            return;
-        }
-
         try {
-            // Call the PlaylistModel to handle the addition
-            playlistModel.addSongToPlaylist(selectedPlaylist.getId());
-            playlistModel.loadSongsForPlaylist(selectedPlaylist.getId()); // Refresh songs for the playlist
-            tblSongsOnPlaylist.refresh();
+            // Retrieve and validate the selected song and playlist
+            Song selectedSong = getSelectedSong();
+            Playlist selectedPlaylist = getSelectedPlaylist();
+
+            // Add the song to the playlist
+            playlistModel.addSongToPlaylist(selectedPlaylist.getId(), selectedSong.getId());
+
+            // Refresh the playlist view
+            refreshPlaylistView(selectedPlaylist);
+
+            // Notify the user
             showInfoAlert("Song Added", "The song has been successfully added to the playlist.");
+        } catch (IllegalArgumentException e) {
+            showInfoAlert("Selection Required", e.getMessage());
         } catch (Exception e) {
             showErrorAlert("Error Adding Song", "An error occurred while adding the song to the playlist: " + e.getMessage());
         }
     }
 
+    // Helper method to retrieve the selected song
+    private Song getSelectedSong() {
+        Song selectedSong = tblSongs.getSelectionModel().getSelectedItem();
+        if (selectedSong == null) {
+            throw new IllegalArgumentException("Please select a song.");
+        }
+        return selectedSong;
+    }
+
+    // Helper method to retrieve the selected playlist
+    private Playlist getSelectedPlaylist() {
+        Playlist selectedPlaylist = tblPlaylist.getSelectionModel().getSelectedItem();
+        if (selectedPlaylist == null) {
+            throw new IllegalArgumentException("Please select a playlist.");
+        }
+        return selectedPlaylist;
+    }
+
+    // Helper method to refresh the playlist view
+    private void refreshPlaylistView(Playlist selectedPlaylist) {
+        playlistModel.loadSongsForPlaylist(selectedPlaylist.getId()); // Refresh songs for the playlist
+        tblSongsOnPlaylist.refresh();
+    }
+
+
+    public void setupVolume() {
+        if (mediaPlayer != null) {
+            volumeSlider.setMin(0.0); // Set minimum value to nothing
+            volumeSlider.setMax(1.0); // Set max value to full
+            volumeSlider.setValue(0.5); // Set initial value to half
+            volumeSlider.setBlockIncrement(0.05); // Set the value for increments
+
+            mediaPlayer.setVolume(volumeSlider.getValue());  // Set initial volume
+            volumeSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+                mediaPlayer.setVolume(newValue.doubleValue()); // Listen for change in slider
+            });
+        }
+    }
+
+    public void setupProgressBar(){
+        progressBar.setProgress(mediaPlayer.getCurrentTime().toSeconds() / 100);
+
+        // Create a Timeline to update the ProgressBar every 100ms
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.seconds(0.1), e -> {
+                    // Calculate the progress based on current time and total duration
+                    double currentTime = mediaPlayer.getCurrentTime().toSeconds();
+                    double totalDuration = mediaPlayer.getTotalDuration().toSeconds();
+
+                    // Set the progress to the ratio of current time over total duration
+                    if (totalDuration > 0) {
+                        progressBar.setProgress(currentTime / totalDuration);
+                    }
+                })
+        );
+        timeline.setCycleCount(Timeline.INDEFINITE); // Keep updating indefinitely
+        timeline.play(); // Start the timeline
+    }
+
+
+    @FXML
+    private void deletePlaylist(ActionEvent actionEvent) {
+        Playlist selectedPlaylist = tblPlaylist.getSelectionModel().getSelectedItem();
+
+        if (selectedPlaylist != null) {
+            Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
+            confirmation.setTitle("Delete Playlist");
+            confirmation.setHeaderText("Are you sure you want to delete this playlist?");
+            confirmation.setContentText("Playlist" + selectedPlaylist.getName());
+
+            Optional<ButtonType> result = confirmation.showAndWait();
+            if (result.isPresent() && result.get() == ButtonType.OK) {
+                try {
+                    playlistManager.deletePlaylist(selectedPlaylist);
+                    playlistModel.getPlaylists().remove(selectedPlaylist);
+                    tblPlaylist.refresh();
+
+                    showInfoAlert("Playlist Deleted", "The playlist has been successfully deleted.");
+                } catch (Exception e) {
+                    showErrorAlert("Error", "could not delete playlist:" + e.getMessage());
+                }
+            } else {
+                showInfoAlert("No Playlist Selected", "Please select a playlist to delete.");
+            }
+        }
+    }
+    @FXML
+    private void deleteSong(ActionEvent actionEvent) {
+        Song selectedSong = tblSongs.getSelectionModel().getSelectedItem();
+
+        if (selectedSong != null) {
+            Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
+            confirmation.setTitle("Delete Song");
+            confirmation.setHeaderText("Are you sure you want to delete this song?");
+            confirmation.setContentText("Song:" + selectedSong.getTitle());
+
+            Optional<ButtonType> result = confirmation.showAndWait();
+            if (result.isPresent() && result.get() == ButtonType.OK) {
+                try {
+                    songModel.deleteSong(selectedSong);
+                    tblSongs.refresh();
+                    showInfoAlert("Song Deleted", "The song has been successfully deleted.");
+                } catch (Exception e) {
+                    showErrorAlert("Error", "could not delete song:" + e.getMessage());
+                }
+            }
+        } else {
+            showInfoAlert("No Song Selected", "Please select a playlist to delete.");
+        }
+    }
 }
 

@@ -23,9 +23,9 @@ public class SongDAO_DB implements ISongDataAccess {
         try (Connection conn = SongdatabaseConnector.getConnection();
              Statement stmt = conn.createStatement()) {
 
-            String sql = "SELECT * " +
-                    "FROM Song " +
-                    "JOIN Genre ON Song.GenreID = Genre.GenreID ";
+            String sql = "SELECT s.SongID, s.Title, s.Duration, s.FilePath, s.ArtistName, g.GenreName " +
+                    "FROM Song s " +
+                    "JOIN Genre g ON s.GenreID = g.GenreID";
 
 
             ResultSet rs = stmt.executeQuery(sql);
@@ -91,8 +91,19 @@ public class SongDAO_DB implements ISongDataAccess {
 
     @Override
     public void deleteSong(Song song) throws Exception {
+    String sql = "DELETE FROM Song WHERE SongID = ?";
 
+    try (Connection conn = SongdatabaseConnector.getConnection();
+    PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+        pstmt.setInt(1, song.getId());
+        pstmt.executeUpdate(); //udfører sletning
+    } catch (SQLException ex) {
+        ex.printStackTrace(); //Udskriv fejlbeskeden til console
+        throw new RuntimeException("Could not delete song:" + ex.getMessage(), ex);
     }
+    }
+
 
 
 

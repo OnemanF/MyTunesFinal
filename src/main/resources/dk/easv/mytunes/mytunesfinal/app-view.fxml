@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" prefHeight="735.0" prefWidth="930.0" spacing="20.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.mytunes.mytunesfinal.GUI.Controller.MyTunesController">
+<VBox alignment="CENTER" prefHeight="735.0" prefWidth="930.0" spacing="20.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.mytunes.mytunesfinal.GUI.Controller.MyTunesController">
    <padding>
       <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
    </padding>
@@ -24,7 +24,7 @@
                <font>
                   <Font size="13.0" />
                </font></Button>
-            <Slider layoutX="50.0" layoutY="80.0" />
+            <Slider fx:id="volumeSlider" layoutX="50.0" layoutY="80.0" />
             <Label fx:id="crntTrackTxt" layoutX="240.0" layoutY="40.0" text="Current Track:">
                <font>
                   <Font name="Dutch 801 Extra Bold BT" size="15.0" />
@@ -32,40 +32,39 @@
             <TextField fx:id="txtSongSearch" layoutX="687.0" layoutY="21.0" prefHeight="26.0" prefWidth="121.0" />
             <Button layoutX="822.0" layoutY="21.0" mnemonicParsing="false" text="Ɑ͞ ̶͞ ̶͞ ̶͞ لں͞" />
             <Label layoutX="644.0" layoutY="25.0" text="Filter:" />
-            <TableView fx:id="tblPlaylist" layoutX="20.0" layoutY="148.0" prefHeight="478.0" prefWidth="230.0" style="-fx-background-color: #a3d8f3;">
+            <TableView fx:id="tblPlaylist" layoutX="20.0" layoutY="148.0" prefHeight="478.0" prefWidth="264.0" style="-fx-background-color: #a3d8f3;">
                <columns>
-                  <TableColumn fx:id="colName" prefWidth="75.0" style="-fx-background-color: #69b9e2;" text="Name" />
-                  <TableColumn fx:id="colSongs" prefWidth="75.0" style="-fx-background-color: #69b9e2;" text="Songs" />
-                  <TableColumn fx:id="colSongsDuration" prefWidth="79.19998779296876" style="-fx-background-color: #69b9e2;" text="Duration" />
+                  <TableColumn fx:id="colName" prefWidth="108.79999542236328" style="-fx-background-color: #69b9e2;" text="Name" />
+                  <TableColumn fx:id="colSongs" prefWidth="97.60003662109375" style="-fx-background-color: #69b9e2;" text="Songs" />
+                  <TableColumn fx:id="colSongsDuration" prefWidth="56.79998779296875" style="-fx-background-color: #69b9e2;" text="Duration" />
                </columns>
             </TableView>
-            <TableView fx:id="tblSongs" layoutX="578.0" layoutY="148.0" prefHeight="478.0" prefWidth="305.0" style="-fx-background-color: #a3d8f3;">
+            <TableView fx:id="tblSongs" layoutX="536.0" layoutY="148.0" prefHeight="478.0" prefWidth="348.0" style="-fx-background-color: #a3d8f3;">
                <columns>
-                  <TableColumn fx:id="colTitle" prefWidth="75.0" style="-fx-background-color: #69b9e2;" text="Title" />
-                  <TableColumn fx:id="colArtist" prefWidth="75.0" style="-fx-background-color: #69b9e2;" text="Artist" />
-                  <TableColumn fx:id="colGenre" prefWidth="75.0" style="-fx-background-color: #69b9e2;" text="Genre" />
-                  <TableColumn fx:id="colDuration" prefWidth="79.19997558593752" style="-fx-background-color: #69b9e2;" text="Duration" />
+                  <TableColumn fx:id="colTitle" prefWidth="86.39996337890625" style="-fx-background-color: #69b9e2;" text="Title" />
+                  <TableColumn fx:id="colArtist" prefWidth="84.800048828125" style="-fx-background-color: #69b9e2;" text="Artist" />
+                  <TableColumn fx:id="colGenre" prefWidth="91.199951171875" style="-fx-background-color: #69b9e2;" text="Genre" />
+                  <TableColumn fx:id="colDuration" prefWidth="85.5999755859375" style="-fx-background-color: #69b9e2;" text="Duration" />
                </columns>
             </TableView>
             <Label layoutX="25.0" layoutY="121.0" text="Playlists">
                <font>
                   <Font name="System Bold" size="16.0" />
                </font></Label>
-            <Button layoutX="530.0" layoutY="174.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="34.0" style="-fx-background-color: #69b9e2;" text="⮜" />
             <Button layoutX="320.0" layoutY="640.0" mnemonicParsing="false" style="-fx-background-color: #69b9e2;" text="▲" />
             <Button layoutX="367.0" layoutY="640.0" mnemonicParsing="false" style="-fx-background-color: #69b9e2;" text="▼" />
-            <Button fx:id="btnStop" layoutX="121.0" layoutY="34.0" mnemonicParsing="false" onAction="#onStop" prefHeight="27.0" prefWidth="34.0" style="-fx-background-color: #69b9e2;" text="⏸">
+            <Button layoutX="121.0" layoutY="34.0" mnemonicParsing="false" onAction="#onStop" prefHeight="27.0" prefWidth="34.0" style="-fx-background-color: #69b9e2;" text="⏸">
                <font>
                   <Font size="13.0" />
                </font></Button>
             <Button layoutX="457.0" layoutY="640.0" mnemonicParsing="false" style="-fx-background-color: #69b9e2;" text="Delete" />
             <Button fx:id="btnAddNewSong" layoutX="578.0" layoutY="640.0" mnemonicParsing="false" onAction="#addSong" prefHeight="26.0" prefWidth="50.0" style="-fx-background-color: #69b9e2;" text="New" />
-            <Button fx:id="btnUpdateSong" layoutX="644.0" layoutY="640.0" mnemonicParsing="false" onAction="#updateSong" prefHeight="26.0" prefWidth="62.0" style="-fx-background-color: #69b9e2;" text="Update" />
-            <Button layoutX="722.0" layoutY="640.0" mnemonicParsing="false" style="-fx-background-color: #69b9e2;" text="Delete" />
-            <Button layoutX="839.0" layoutY="639.0" mnemonicParsing="false" style="-fx-background-color: #69b9e2;" text="Close" />
+            <Button fx:id="btnUpdateSong" layoutX="635.0" layoutY="640.0" mnemonicParsing="false" onAction="#updateSong" prefHeight="26.0" prefWidth="62.0" style="-fx-background-color: #69b9e2;" text="Update" />
+            <Button fx:id="btnDeleteSong" layoutX="705.0" layoutY="640.0" mnemonicParsing="false" onAction="#deleteSong" style="-fx-background-color: #69b9e2;" text="Delete" />
+            <Button layoutX="831.0" layoutY="677.0" mnemonicParsing="false" style="-fx-background-color: #69b9e2;" text="Close" />
             <Button fx:id="btnNewPlaylist" layoutX="25.0" layoutY="639.0" mnemonicParsing="false" onAction="#createNewPlaylist" prefHeight="26.0" prefWidth="50.0" style="-fx-background-color: #69b9e2;" text="New" />
             <Button layoutX="87.0" layoutY="640.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="50.0" style="-fx-background-color: #69b9e2;" text="Edit" />
-            <Button layoutX="152.0" layoutY="640.0" mnemonicParsing="false" style="-fx-background-color: #69b9e2;" text="Delete" />
+            <Button fx:id="btnDeletePlaylist" layoutX="152.0" layoutY="640.0" mnemonicParsing="false" onAction="#deletePlaylist" style="-fx-background-color: #69b9e2;" text="Delete" />
             <Label layoutX="202.0" layoutY="78.0" text="🕪" />
             <Label layoutX="316.0" layoutY="121.0" text="Songs on playlist">
                <font>
@@ -75,12 +74,13 @@
                <font>
                   <Font name="System Bold" size="16.0" />
                </font></Label>
-            <TableView fx:id="tblSongsOnPlaylist" layoutX="316.0" layoutY="148.0" prefHeight="478.0" prefWidth="177.0" style="-fx-background-color: #a3d8f3;">
+            <TableView fx:id="tblSongsOnPlaylist" layoutX="304.0" layoutY="148.0" prefHeight="478.0" prefWidth="212.0" style="-fx-background-color: #a3d8f3;">
                <columns>
-                  <TableColumn fx:id="colSongsArtist" prefWidth="85.60003662109375" style="-fx-background-color: #69b9e2;" text="Artist" />
-                  <TableColumn fx:id="colSong" prefWidth="88.0" style="-fx-background-color: #69b9e2;" text="Song" />
+                  <TableColumn fx:id="colTitleOnplaylist" prefWidth="112.79998779296875" style="-fx-background-color: #69b9e2;" text="Title" />
+                  <TableColumn fx:id="colSongsArtist" minWidth="0.0" prefWidth="98.39999389648438" style="-fx-background-color: #69b9e2;" text="Artist" />
                </columns>
             </TableView>
+            <Button layoutX="765.0" layoutY="640.0" mnemonicParsing="false" onAction="#addSongToPlaylist" style="-fx-background-color: #69b9e2;" text="AddSongtoplaylist" />
          </children>
       </AnchorPane>
    </children>
