@@ -55,4 +55,9 @@ public class SongModel {
 
     }
 
+    public void deleteSong(Song deletedSong) throws Exception {
+        songManager.deleteSong(deletedSong);
+        songsToBeViewed.remove(deletedSong);
+    }
+
 }

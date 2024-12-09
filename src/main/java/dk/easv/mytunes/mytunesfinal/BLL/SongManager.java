@@ -100,6 +100,9 @@ public class SongManager {
         return songDAO.addSong(newSong,artist.getArtistID(),genre.getGenreID());
 
          */
+    public void deleteSong(Song song) throws Exception {
+        songDAO.deleteSong(song);
+    }
     }
 
 

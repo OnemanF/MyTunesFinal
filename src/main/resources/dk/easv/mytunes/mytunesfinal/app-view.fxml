@@ -61,7 +61,7 @@
             <Button layoutX="457.0" layoutY="640.0" mnemonicParsing="false" style="-fx-background-color: #69b9e2;" text="Delete" />
             <Button fx:id="btnAddNewSong" layoutX="578.0" layoutY="640.0" mnemonicParsing="false" onAction="#addSong" prefHeight="26.0" prefWidth="50.0" style="-fx-background-color: #69b9e2;" text="New" />
             <Button fx:id="btnUpdateSong" layoutX="644.0" layoutY="640.0" mnemonicParsing="false" onAction="#updateSong" prefHeight="26.0" prefWidth="62.0" style="-fx-background-color: #69b9e2;" text="Update" />
-            <Button layoutX="722.0" layoutY="640.0" mnemonicParsing="false" style="-fx-background-color: #69b9e2;" text="Delete" />
+            <Button fx:id="btnDeleteSong" layoutX="722.0" layoutY="640.0" mnemonicParsing="false" onAction="#deleteSong" style="-fx-background-color: #69b9e2;" text="Delete" />
             <Button layoutX="839.0" layoutY="639.0" mnemonicParsing="false" style="-fx-background-color: #69b9e2;" text="Close" />
             <Button fx:id="btnNewPlaylist" layoutX="25.0" layoutY="639.0" mnemonicParsing="false" onAction="#createNewPlaylist" prefHeight="26.0" prefWidth="50.0" style="-fx-background-color: #69b9e2;" text="New" />
             <Button layoutX="87.0" layoutY="640.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="50.0" style="-fx-background-color: #69b9e2;" text="Edit" />

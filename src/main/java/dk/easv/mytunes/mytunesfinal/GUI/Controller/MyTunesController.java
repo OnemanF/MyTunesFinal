@@ -35,6 +35,9 @@ public class MyTunesController implements Initializable {
     @FXML
     private TableColumn<Song, String> colSong, colSongsArtist;
 
+    @FXML
+    private Button deleteSong;
+
     //playlist table
     @FXML
     private TableColumn<Playlist, String> colName, colSongs, colSongsDuration;
@@ -376,6 +379,30 @@ public class MyTunesController implements Initializable {
             } else {
                 showInfoAlert("No Playlist Selected", "Please select a playlist to delete.");
             }
+        }
+    }
+    @FXML
+    private void deleteSong(ActionEvent actionEvent) {
+        Song selectedSong = tblSongs.getSelectionModel().getSelectedItem();
+
+        if (selectedSong != null) {
+            Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
+            confirmation.setTitle("Delete Song");
+            confirmation.setHeaderText("Are you sure you want to delete this song?");
+            confirmation.setContentText("Song:" + selectedSong.getTitle());
+
+            Optional<ButtonType> result = confirmation.showAndWait();
+            if (result.isPresent() && result.get() == ButtonType.OK) {
+                try {
+                    songModel.deleteSong(selectedSong);
+                    tblSongs.refresh();
+                    showInfoAlert("Song Deleted", "The song has been successfully deleted.");
+                } catch (Exception e) {
+                    showErrorAlert("Error", "could not delete song:" + e.getMessage());
+                }
+            }
+        } else {
+            showInfoAlert("No Song Selected", "Please select a playlist to delete.");
         }
     }
 }
