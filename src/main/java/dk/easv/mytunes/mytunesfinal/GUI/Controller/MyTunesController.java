@@ -112,7 +112,7 @@ public class MyTunesController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
 
         setupTableViews();
-        loadInPlaylists();
+        loadPlaylists();
         setupEventListeners();
 
 
@@ -153,8 +153,8 @@ public class MyTunesController implements Initializable {
     }
 
     // Loads playlists into the table view.
-    private void loadInPlaylists() {
-        playlistModel.loadInPlaylists();
+    private void loadPlaylists() {
+        playlistModel.loadPlaylists();
         tblPlaylist.refresh();
     }
 
@@ -167,7 +167,7 @@ public class MyTunesController implements Initializable {
         result.ifPresent(playlistName -> {
             try {
                 playlistModel.createPlaylist(playlistName);
-                loadInPlaylists(); // Reload or refresh the list
+                loadPlaylists(); // Reload or refresh the list
             } catch (Exception e) {
                 e.printStackTrace(); // Or handle this more gracefully
             }
