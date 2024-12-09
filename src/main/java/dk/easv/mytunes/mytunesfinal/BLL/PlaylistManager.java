@@ -41,5 +41,7 @@ public class PlaylistManager {
         // Delegate to the DAO layer
         playlistDAO_DB.addSongToPlaylist( playlistId);
     }
-
+    public void deletePlaylist(Playlist playlist) throws Exception {
+        playlistDAO_DB.deletePlaylist(playlist);
+    }
 }

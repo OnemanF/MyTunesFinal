@@ -228,7 +228,6 @@ public class MyTunesController implements Initializable {
     }
 
 
-
     // Helper methods for displaying alerts
     private void showInfoAlert(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -261,48 +260,47 @@ public class MyTunesController implements Initializable {
                 mediaPlayer.play();
                 System.out.println("Resumed playback.");
                 return;
-                }
-            else if (status == MediaPlayer.Status.PLAYING) {
+            } else if (status == MediaPlayer.Status.PLAYING) {
                 System.out.println("Already playing, moron.");
                 return;
             }
 
 
         }
-        
+
         songPaths = items.stream().toList(); // Convert to a List<String>.
         currentSongIndex = 0; // Reset to the start of the playlist.
 
         playSong(currentSongIndex);
     }
 
-    private void playSong(int index)  {
+    private void playSong(int index) {
         if (index >= songPaths.size()) {
             System.out.println("End of playlist.");
             return; // Stop if we reach the end of the playlist.
         }
-try{
-        Song Song = songPaths.get(index);
+        try {
+            Song Song = songPaths.get(index);
 
-        String path = folder + Song.getFilePath();
-        System.out.println("Now playing: " + path);
-        crntTrackTxt.setText("Current Track: " + Song.getTitle() + " - " + Song.getArtist());
+            String path = folder + Song.getFilePath();
+            System.out.println("Now playing: " + path);
+            crntTrackTxt.setText("Current Track: " + Song.getTitle() + " - " + Song.getArtist());
 
-        // Create Media and MediaPlayer for the current song.
-        Media media = new Media(new File(path).toURI().toString());
-        mediaPlayer = new MediaPlayer(media);
-        // Start playback.
-        mediaPlayer.play();
+            // Create Media and MediaPlayer for the current song.
+            Media media = new Media(new File(path).toURI().toString());
+            mediaPlayer = new MediaPlayer(media);
+            // Start playback.
+            mediaPlayer.play();
 
-        // Set callback to play the next song after the current one ends.
-        mediaPlayer.setOnEndOfMedia(() -> {
-            currentSongIndex++;
-            playSong(currentSongIndex);
+            // Set callback to play the next song after the current one ends.
+            mediaPlayer.setOnEndOfMedia(() -> {
+                currentSongIndex++;
+                playSong(currentSongIndex);
 
-        });
-} catch (Exception e) {
-    System.out.println( e.getMessage());
-}
+            });
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     public void onStop(ActionEvent actionEvent) {
@@ -322,7 +320,6 @@ try{
         currentSongIndex--;
         playSong(currentSongIndex);
     }
-
 
 
     private void setupEventListeners() {
@@ -355,5 +352,32 @@ try{
         }
     }
 
+    @FXML
+    private void deletePlaylist(ActionEvent actionEvent) {
+        Playlist selectedPlaylist = tblPlaylist.getSelectionModel().getSelectedItem();
+
+        if (selectedPlaylist != null) {
+            Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
+            confirmation.setTitle("Delete Playlist");
+            confirmation.setHeaderText("Are you sure you want to delete this playlist?");
+            confirmation.setContentText("Playlist" + selectedPlaylist.getName());
+
+            Optional<ButtonType> result = confirmation.showAndWait();
+            if (result.isPresent() && result.get() == ButtonType.OK) {
+                try {
+                    playlistManager.deletePlaylist(selectedPlaylist);
+                    playlistModel.getPlaylists().remove(selectedPlaylist);
+                    tblPlaylist.refresh();
+
+                    showInfoAlert("Playlist Deleted", "The playlist has been successfully deleted.");
+                } catch (Exception e) {
+                    showErrorAlert("Error", "could not delete playlist:" + e.getMessage());
+                }
+            } else {
+                showInfoAlert("No Playlist Selected", "Please select a playlist to delete.");
+            }
+        }
+    }
 }
+
 

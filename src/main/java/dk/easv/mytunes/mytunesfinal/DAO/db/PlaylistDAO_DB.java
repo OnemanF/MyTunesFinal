@@ -83,6 +83,7 @@ public class PlaylistDAO_DB implements IPlaylistDataAccess {
         "SELECT s.SongID, s.Title, s.Duration, s.FilePath, s.ArtistName, s.GenreID " +
                 "FROM Song s " +
                 "INNER JOIN SongsOnPlaylist sop ON s.SongID = sop.SongID " +
+                "INNER JOIN Genre g ON s.GenreID = g.GenreID" +
                 "WHERE sop.PlaylistID = ?";
 
         try (Connection conn = playlistdatabaseConnector.getConnection();
@@ -173,6 +174,20 @@ public class PlaylistDAO_DB implements IPlaylistDataAccess {
             throw new RuntimeException("Error adding song to playlist: " + e.getMessage());
         }
     }
+    public void deletePlaylist(Playlist playlist) throws Exception {
+        String sql = "DELETE FROM Playlist WHERE PlaylistID = ?";
 
+        try (Connection conn = playlistdatabaseConnector.getConnection();
+        PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, playlist.getId()); //Sætter playlist ID som parameter i SQL-forespørgslen
+
+            pstmt.executeUpdate(); //udfører sletning
+        }
+        catch (SQLException ex) {
+            ex.printStackTrace();
+            throw new RuntimeException("Error deleting playlist: " + ex.getMessage());
+        }
+    }
 
 }
