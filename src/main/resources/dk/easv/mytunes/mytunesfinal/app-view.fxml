@@ -24,7 +24,7 @@
                <font>
                   <Font size="13.0" />
                </font></Button>
-            <Slider layoutX="50.0" layoutY="80.0" />
+            <Slider fx:id="volumeSlider" layoutX="50.0" layoutY="80.0" />
             <Label fx:id="crntTrackTxt" layoutX="240.0" layoutY="40.0" text="Current Track:">
                <font>
                   <Font name="Dutch 801 Extra Bold BT" size="15.0" />
