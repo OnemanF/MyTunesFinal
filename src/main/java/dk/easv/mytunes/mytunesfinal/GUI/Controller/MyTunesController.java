@@ -354,24 +354,48 @@ try{
     }
 
     public void addSongToPlaylist(ActionEvent actionEvent) {
-        // Retrieve the selected song and playlist
-        Song selectedSong = tblSongs.getSelectionModel().getSelectedItem();
-        Playlist selectedPlaylist = tblPlaylist.getSelectionModel().getSelectedItem();
-
-        if (selectedSong == null || selectedPlaylist == null) {
-            showInfoAlert("Selection Required", "Please select both a song and a playlist.");
-            return;
-        }
-
         try {
-            // Call the PlaylistModel to handle the addition
-            playlistModel.addSongToPlaylist(selectedPlaylist.getId());
-            playlistModel.loadSongsForPlaylist(selectedPlaylist.getId()); // Refresh songs for the playlist
-            tblSongsOnPlaylist.refresh();
+            // Retrieve and validate the selected song and playlist
+            Song selectedSong = getSelectedSong();
+            Playlist selectedPlaylist = getSelectedPlaylist();
+
+            // Add the song to the playlist
+            playlistModel.addSongToPlaylist(selectedPlaylist.getId(), selectedSong.getId());
+
+            // Refresh the playlist view
+            refreshPlaylistView(selectedPlaylist);
+
+            // Notify the user
             showInfoAlert("Song Added", "The song has been successfully added to the playlist.");
+        } catch (IllegalArgumentException e) {
+            showInfoAlert("Selection Required", e.getMessage());
         } catch (Exception e) {
             showErrorAlert("Error Adding Song", "An error occurred while adding the song to the playlist: " + e.getMessage());
         }
+    }
+
+    // Helper method to retrieve the selected song
+    private Song getSelectedSong() {
+        Song selectedSong = tblSongs.getSelectionModel().getSelectedItem();
+        if (selectedSong == null) {
+            throw new IllegalArgumentException("Please select a song.");
+        }
+        return selectedSong;
+    }
+
+    // Helper method to retrieve the selected playlist
+    private Playlist getSelectedPlaylist() {
+        Playlist selectedPlaylist = tblPlaylist.getSelectionModel().getSelectedItem();
+        if (selectedPlaylist == null) {
+            throw new IllegalArgumentException("Please select a playlist.");
+        }
+        return selectedPlaylist;
+    }
+
+    // Helper method to refresh the playlist view
+    private void refreshPlaylistView(Playlist selectedPlaylist) {
+        playlistModel.loadSongsForPlaylist(selectedPlaylist.getId()); // Refresh songs for the playlist
+        tblSongsOnPlaylist.refresh();
     }
 
 
