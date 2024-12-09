@@ -5,6 +5,8 @@ import dk.easv.mytunes.mytunesfinal.BE.Song;
 import dk.easv.mytunes.mytunesfinal.BLL.PlaylistManager;
 import dk.easv.mytunes.mytunesfinal.GUI.Model.PlaylistModel;
 import dk.easv.mytunes.mytunesfinal.GUI.Model.SongModel;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -48,6 +50,10 @@ public class MyTunesController implements Initializable {
 
     @FXML
     private Label crntTrackTxt;
+
+    //slider
+    @FXML
+    private Slider volumeSlider;
 
     //buttons
     @FXML
@@ -231,6 +237,7 @@ public class MyTunesController implements Initializable {
     }
 
 
+
     // Helper methods for displaying alerts
     private void showInfoAlert(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -263,47 +270,49 @@ public class MyTunesController implements Initializable {
                 mediaPlayer.play();
                 System.out.println("Resumed playback.");
                 return;
-            } else if (status == MediaPlayer.Status.PLAYING) {
+                }
+            else if (status == MediaPlayer.Status.PLAYING) {
                 System.out.println("Already playing, moron.");
                 return;
             }
 
 
         }
-
+        
         songPaths = items.stream().toList(); // Convert to a List<String>.
         currentSongIndex = 0; // Reset to the start of the playlist.
 
         playSong(currentSongIndex);
     }
 
-    private void playSong(int index) {
+    private void playSong(int index)  {
         if (index >= songPaths.size()) {
             System.out.println("End of playlist.");
             return; // Stop if we reach the end of the playlist.
         }
-        try {
-            Song Song = songPaths.get(index);
+try{
+        Song Song = songPaths.get(index);
 
-            String path = folder + Song.getFilePath();
-            System.out.println("Now playing: " + path);
-            crntTrackTxt.setText("Current Track: " + Song.getTitle() + " - " + Song.getArtist());
+        String path = folder + Song.getFilePath();
+        System.out.println("Now playing: " + path);
+        crntTrackTxt.setText("Current Track: " + Song.getTitle() + " - " + Song.getArtist());
 
-            // Create Media and MediaPlayer for the current song.
-            Media media = new Media(new File(path).toURI().toString());
-            mediaPlayer = new MediaPlayer(media);
-            // Start playback.
-            mediaPlayer.play();
+        // Create Media and MediaPlayer for the current song.
+        Media media = new Media(new File(path).toURI().toString());
+        mediaPlayer = new MediaPlayer(media);
+        // Start playback.
+        mediaPlayer.play();
+        setupVolume();
 
-            // Set callback to play the next song after the current one ends.
-            mediaPlayer.setOnEndOfMedia(() -> {
-                currentSongIndex++;
-                playSong(currentSongIndex);
+        // Set callback to play the next song after the current one ends.
+        mediaPlayer.setOnEndOfMedia(() -> {
+            currentSongIndex++;
+            playSong(currentSongIndex);
 
-            });
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
+        });
+} catch (Exception e) {
+    System.out.println( e.getMessage());
+}
     }
 
     public void onStop(ActionEvent actionEvent) {
@@ -323,6 +332,7 @@ public class MyTunesController implements Initializable {
         currentSongIndex--;
         playSong(currentSongIndex);
     }
+
 
 
     private void setupEventListeners() {
@@ -352,6 +362,21 @@ public class MyTunesController implements Initializable {
             showInfoAlert("Song Added", "The song has been successfully added to the playlist.");
         } catch (Exception e) {
             showErrorAlert("Error Adding Song", "An error occurred while adding the song to the playlist: " + e.getMessage());
+        }
+    }
+
+
+    public void setupVolume() {
+        if (mediaPlayer != null) {
+            volumeSlider.setMin(0.0); // Set minimum value to nothing
+            volumeSlider.setMax(1.0); // Set max value to full
+            volumeSlider.setValue(0.5); // Set initial value to half
+            volumeSlider.setBlockIncrement(0.05); // Set the value for increments
+
+            mediaPlayer.setVolume(volumeSlider.getValue());  // Set initial volume
+            volumeSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+                mediaPlayer.setVolume(newValue.doubleValue()); // Listen for change in slider
+            });
         }
     }
 
@@ -406,5 +431,4 @@ public class MyTunesController implements Initializable {
         }
     }
 }
-
 
