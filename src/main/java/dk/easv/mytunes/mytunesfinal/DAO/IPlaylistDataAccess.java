@@ -10,4 +10,6 @@ public interface IPlaylistDataAccess {
     List<Playlist> getAllPlaylists() throws Exception;
 
     Playlist createPlaylist(Playlist playlist) throws Exception;
+
+    void editPlaylist(Playlist playlist) throws Exception;
 }

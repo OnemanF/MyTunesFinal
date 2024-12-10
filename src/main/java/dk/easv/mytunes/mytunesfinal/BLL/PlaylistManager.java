@@ -44,4 +44,11 @@ public class PlaylistManager {
     public void deletePlaylist(Playlist playlist) throws Exception {
         playlistDAO_DB.deletePlaylist(playlist);
     }
+
+    public void editPlaylist(Playlist playlist) throws Exception {
+        playlistDAO.editPlaylist(playlist);
+    }
+    public void removeSongFromPlaylist(int playlistId, int songId) throws Exception {
+        playlistDAO_DB.removeSongFromPlaylist(playlistId, songId);
+    }
 }

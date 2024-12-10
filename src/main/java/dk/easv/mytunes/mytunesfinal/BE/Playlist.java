@@ -4,18 +4,25 @@ public class Playlist {
 
     private int PlaylistID;
     private String name;
-    private int playlistTotalDuration;
     private int SongsAmount;
+    private int playlistTotalDuration;
+
     private Integer numberOfSongs;
 
-    public Playlist(int PlaylistID, String name, int playlistTotalDuration, int SongsAmount) {
+    public Playlist(int PlaylistID, String name, int SongsAmount, int playlistTotalDuration ) {
         this.PlaylistID = PlaylistID;
         this.name = name;
-        this.playlistTotalDuration = playlistTotalDuration;
         this.SongsAmount = SongsAmount;
+        this.playlistTotalDuration = playlistTotalDuration;
+
     }
 
-    public int getId() {
+    public Playlist(int PlaylistID, String name) {
+        this.PlaylistID = PlaylistID;
+        this.name = name;
+    }
+
+        public int getId() {
         return PlaylistID;
     }
 

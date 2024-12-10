@@ -58,6 +58,9 @@ public class MyTunesController implements Initializable {
     @FXML
     private Label crntTrackTxt;
 
+    @FXML
+    private Label progressLbl;
+
     //slider
     @FXML
     private Slider volumeSlider;
@@ -122,6 +125,7 @@ public class MyTunesController implements Initializable {
         loadPlaylists();
         setupEventListeners();
         setupPlaylistSelectionListener();
+        volumeSlider.setValue(0.5);
     }
 
 
@@ -427,17 +431,16 @@ try{
 
 
     public void setupVolume() {
-        if (mediaPlayer != null) {
+
             volumeSlider.setMin(0.0); // Set minimum value to nothing
             volumeSlider.setMax(1.0); // Set max value to full
-            volumeSlider.setValue(0.5); // Set initial value to half
             volumeSlider.setBlockIncrement(0.05); // Set the value for increments
-
-            mediaPlayer.setVolume(volumeSlider.getValue());  // Set initial volume
-            volumeSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
-                mediaPlayer.setVolume(newValue.doubleValue()); // Listen for change in slider
-            });
-        }
+            if (mediaPlayer != null) {
+                mediaPlayer.setVolume(volumeSlider.getValue());  // Set initial volume
+                volumeSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+                    mediaPlayer.setVolume(newValue.doubleValue()); // Listen for change in slider
+                });
+            }
     }
 
     public void setupProgressBar(){
@@ -453,6 +456,17 @@ try{
                     // Set the progress to the ratio of current time over total duration
                     if (totalDuration > 0) {
                         progressBar.setProgress(currentTime / totalDuration);
+
+                        // Converts double from toSeconds into our chosen format of "00:00"
+                        int dingusTime = (int) mediaPlayer.getCurrentTime().toSeconds();
+                        int dingusTotal = (int) mediaPlayer.getTotalDuration().toSeconds();
+
+                        // Converts current and total time to strings for use in label under progressbar
+                        String displayTime = String.format (getDurationFormatted(dingusTime));
+                        String totalTime = String.format (getDurationFormatted(dingusTotal));
+                        // Sets label under bar to given values
+                        progressLbl.setText(displayTime + " / " + totalTime);
+
                     }
                 })
         );
@@ -511,5 +525,61 @@ try{
             showInfoAlert("No Song Selected", "Please select a playlist to delete.");
         }
     }
+
+    public void editPlaylist(ActionEvent actionEvent) {
+        Playlist selectedPlaylist = tblPlaylist.getSelectionModel().getSelectedItem();
+        if (selectedPlaylist != null) {
+            TextInputDialog dialog = new TextInputDialog(selectedPlaylist.getName());
+            dialog.setTitle("Edit Playlist");
+            dialog.setHeaderText("Enter the new name for the playlist:");
+
+            Optional<String> result = dialog.showAndWait();
+            result.ifPresent(newPlaylistName -> {
+                try {
+                    playlistModel.editPlaylist(selectedPlaylist.getId(), newPlaylistName);
+                    loadPlaylists(); // Reload or refresh the list
+                } catch (Exception e) {
+                    e.printStackTrace(); // Or handle this more gracefully
+                }
+            });
+        } else {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("No Playlist Selected");
+            alert.setHeaderText("Please select a playlist to edit.");
+            alert.setContentText("You must select a playlist from the table before attempting to edit.");
+            alert.showAndWait();
+            }
+        }
+
+        public void onBtnClose(ActionEvent actionEvent) {
+            Platform.exit();
+        }
+    @FXML
+    private void removeSongFromPlaylist(ActionEvent actionEvent) {
+        Song selectedSong = tblSongsOnPlaylist.getSelectionModel().getSelectedItem();
+        Playlist selectedPlaylist = tblPlaylist.getSelectionModel().getSelectedItem();
+
+        if (selectedSong != null && selectedPlaylist != null) {
+            Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
+            confirmation.setTitle("Remove Song");
+            confirmation.setHeaderText("Are you sure you want to remove this song from the playlist?");
+            confirmation.setContentText("Song: " + selectedSong.getTitle());
+
+            Optional<ButtonType> result = confirmation.showAndWait();
+            if (result.isPresent() && result.get() == ButtonType.OK) {
+                try {
+                    playlistModel.removeSongFromPlaylist(selectedPlaylist.getId(), selectedSong.getId());
+                    playlistModel.loadSongsForPlaylist(selectedPlaylist.getId());
+                    tblSongsOnPlaylist.refresh();
+                    showInfoAlert("Song Removed", "The song has been successfully removed from the playlist.");
+                } catch (Exception e) {
+                    showErrorAlert("Error", "Could not remove song from playlist: " + e.getMessage());
+                }
+            }
+        } else {
+            showInfoAlert("No Song Selected", "Please select a song from the playlist to remove.");
+        }
+    }
+
 }
 
