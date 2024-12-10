@@ -551,5 +551,9 @@ try{
             }
         }
 
+        public void onBtnClose(ActionEvent actionEvent) {
+            Platform.exit();
+        }
+
 }
 
