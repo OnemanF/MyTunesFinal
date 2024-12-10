@@ -83,6 +83,7 @@
             </TableView>
             <Button layoutX="765.0" layoutY="640.0" mnemonicParsing="false" onAction="#addSongToPlaylist" style="-fx-background-color: #69b9e2;" text="AddSongtoplaylist" />
             <ProgressBar fx:id="progressBar" layoutX="241.0" layoutY="71.0" prefHeight="18.0" prefWidth="391.0" progress="0.0" />
+            <Label fx:id="progressLbl" layoutX="423.0" layoutY="87.0" text="00:00" />
          </children>
       </AnchorPane>
    </children>

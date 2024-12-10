@@ -58,6 +58,9 @@ public class MyTunesController implements Initializable {
     @FXML
     private Label crntTrackTxt;
 
+    @FXML
+    private Label progressLbl;
+
     //slider
     @FXML
     private Slider volumeSlider;
@@ -453,6 +456,17 @@ try{
                     // Set the progress to the ratio of current time over total duration
                     if (totalDuration > 0) {
                         progressBar.setProgress(currentTime / totalDuration);
+
+                        // Converts double from toSeconds into our chosen format of "00:00"
+                        int dingusTime = (int) mediaPlayer.getCurrentTime().toSeconds();
+                        int dingusTotal = (int) mediaPlayer.getTotalDuration().toSeconds();
+
+                        // Converts current and total time to strings for use in label under progressbar
+                        String displayTime = String.format (getDurationFormatted(dingusTime));
+                        String totalTime = String.format (getDurationFormatted(dingusTotal));
+                        // Sets label under bar to given values
+                        progressLbl.setText(displayTime + " / " + totalTime);
+
                     }
                 })
         );
