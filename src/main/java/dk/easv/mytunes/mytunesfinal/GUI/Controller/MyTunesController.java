@@ -525,5 +525,31 @@ try{
             showInfoAlert("No Song Selected", "Please select a playlist to delete.");
         }
     }
+
+    public void editPlaylist(ActionEvent actionEvent) {
+        Playlist selectedPlaylist = tblPlaylist.getSelectionModel().getSelectedItem();
+        if (selectedPlaylist != null) {
+            TextInputDialog dialog = new TextInputDialog(selectedPlaylist.getName());
+            dialog.setTitle("Edit Playlist");
+            dialog.setHeaderText("Enter the new name for the playlist:");
+
+            Optional<String> result = dialog.showAndWait();
+            result.ifPresent(newPlaylistName -> {
+                try {
+                    playlistModel.editPlaylist(selectedPlaylist.getId(), newPlaylistName);
+                    loadPlaylists(); // Reload or refresh the list
+                } catch (Exception e) {
+                    e.printStackTrace(); // Or handle this more gracefully
+                }
+            });
+        } else {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("No Playlist Selected");
+            alert.setHeaderText("Please select a playlist to edit.");
+            alert.setContentText("You must select a playlist from the table before attempting to edit.");
+            alert.showAndWait();
+            }
+        }
+
 }
 

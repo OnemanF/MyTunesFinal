@@ -15,7 +15,12 @@ public class Playlist {
         this.SongsAmount = SongsAmount;
     }
 
-    public int getId() {
+    public Playlist(int PlaylistID, String name) {
+        this.PlaylistID = PlaylistID;
+        this.name = name;
+    }
+
+        public int getId() {
         return PlaylistID;
     }
 

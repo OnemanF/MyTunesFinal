@@ -196,4 +196,17 @@ public class PlaylistDAO_DB implements IPlaylistDataAccess {
         }
     }
 
+    public void editPlaylist(Playlist playlist) throws Exception {
+        String sql = "UPDATE Playlist SET Name = ? WHERE PlaylistID = ?";
+        try (Connection conn = playlistdatabaseConnector.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, playlist.getName());
+            pstmt.setInt(2, playlist.getId());
+            pstmt.executeUpdate();
+        } catch (SQLException ex) {
+            throw new Exception("Error updating playlist: " + ex.getMessage(), ex);
+        }
+    }
+
 }

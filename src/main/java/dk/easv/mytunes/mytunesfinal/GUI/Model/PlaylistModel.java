@@ -95,4 +95,14 @@ public class PlaylistModel {
         // Delegate to the PlaylistManager
         playlistManager.addSongToPlaylist(playlistId, songId);
     }
+
+    public void editPlaylist(int id, String newPlaylistName) {
+        try {
+            playlistManager.editPlaylist(new Playlist(id, newPlaylistName));
+            loadPlaylists();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }
