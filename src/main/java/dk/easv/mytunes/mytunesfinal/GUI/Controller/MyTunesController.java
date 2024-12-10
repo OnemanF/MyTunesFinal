@@ -125,6 +125,7 @@ public class MyTunesController implements Initializable {
         loadPlaylists();
         setupEventListeners();
         setupPlaylistSelectionListener();
+        volumeSlider.setValue(0.5);
     }
 
 
@@ -430,17 +431,16 @@ try{
 
 
     public void setupVolume() {
-        if (mediaPlayer != null) {
+
             volumeSlider.setMin(0.0); // Set minimum value to nothing
             volumeSlider.setMax(1.0); // Set max value to full
-            volumeSlider.setValue(0.5); // Set initial value to half
             volumeSlider.setBlockIncrement(0.05); // Set the value for increments
-
-            mediaPlayer.setVolume(volumeSlider.getValue());  // Set initial volume
-            volumeSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
-                mediaPlayer.setVolume(newValue.doubleValue()); // Listen for change in slider
-            });
-        }
+            if (mediaPlayer != null) {
+                mediaPlayer.setVolume(volumeSlider.getValue());  // Set initial volume
+                volumeSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+                    mediaPlayer.setVolume(newValue.doubleValue()); // Listen for change in slider
+                });
+            }
     }
 
     public void setupProgressBar(){
