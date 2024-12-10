@@ -91,18 +91,32 @@ public class SongDAO_DB implements ISongDataAccess {
 
     @Override
     public void deleteSong(Song song) throws Exception {
-    String sql = "DELETE FROM Song WHERE SongID = ?";
+        String removeFromPlaylists = "DELETE FROM SongsOnPlaylist WHERE SongID = ?";
+        String deleteSong = "DELETE FROM Song WHERE SongID = ?";
 
-    try (Connection conn = SongdatabaseConnector.getConnection();
-    PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (Connection conn = SongdatabaseConnector.getConnection()) {
+            conn.setAutoCommit(false); // Start transaction
 
-        pstmt.setInt(1, song.getId());
-        pstmt.executeUpdate(); //udfører sletning
-    } catch (SQLException ex) {
-        ex.printStackTrace(); //Udskriv fejlbeskeden til console
-        throw new RuntimeException("Could not delete song:" + ex.getMessage(), ex);
-    }
-    }
+            try (PreparedStatement removeStmt = conn.prepareStatement(removeFromPlaylists);
+                 PreparedStatement deleteStmt = conn.prepareStatement(deleteSong)) {
+
+                // Fjern sangen fra alle playlister
+                removeStmt.setInt(1, song.getId());
+                removeStmt.executeUpdate();
+
+                // Slet selve sangen
+                deleteStmt.setInt(1, song.getId());
+                deleteStmt.executeUpdate();
+
+                conn.commit(); // Commit transaction
+            } catch (SQLException e) {
+                conn.rollback(); // Rollback transaction ved fejl
+                throw new Exception("Error deleting song: " + e.getMessage(), e);
+            }
+        }
+
+
+}
 
 
 

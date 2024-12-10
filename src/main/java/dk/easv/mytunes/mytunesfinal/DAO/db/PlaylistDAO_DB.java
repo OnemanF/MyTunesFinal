@@ -218,4 +218,19 @@ public class PlaylistDAO_DB implements IPlaylistDataAccess {
         }
     }
 
+    public void removeSongFromPlaylist(int playlistId, int songId) throws Exception {
+        String sql = "DELETE FROM SongsOnPlaylist WHERE PlaylistID = ? AND SongID = ?";
+
+        try (Connection conn = playlistdatabaseConnector.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+                 pstmt.setInt(1, playlistId);
+                 pstmt.setInt(2, songId);
+
+                 pstmt.executeUpdate();
+        } catch (SQLException ex) {
+                 ex.printStackTrace();
+                 throw new RuntimeException("Error deleting song from playlist: " + ex.getMessage(), ex);
+        }
+    }
 }

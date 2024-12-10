@@ -105,4 +105,8 @@ public class PlaylistModel {
         }
     }
 
+    public void removeSongFromPlaylist(int playlistId, int songId) throws Exception {
+        playlistManager.removeSongFromPlaylist(playlistId, songId);
+        loadSongsForPlaylist(playlistId);
+    }
 }

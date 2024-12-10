@@ -554,6 +554,32 @@ try{
         public void onBtnClose(ActionEvent actionEvent) {
             Platform.exit();
         }
+    @FXML
+    private void removeSongFromPlaylist(ActionEvent actionEvent) {
+        Song selectedSong = tblSongsOnPlaylist.getSelectionModel().getSelectedItem();
+        Playlist selectedPlaylist = tblPlaylist.getSelectionModel().getSelectedItem();
+
+        if (selectedSong != null && selectedPlaylist != null) {
+            Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
+            confirmation.setTitle("Remove Song");
+            confirmation.setHeaderText("Are you sure you want to remove this song from the playlist?");
+            confirmation.setContentText("Song: " + selectedSong.getTitle());
+
+            Optional<ButtonType> result = confirmation.showAndWait();
+            if (result.isPresent() && result.get() == ButtonType.OK) {
+                try {
+                    playlistModel.removeSongFromPlaylist(selectedPlaylist.getId(), selectedSong.getId());
+                    playlistModel.loadSongsForPlaylist(selectedPlaylist.getId());
+                    tblSongsOnPlaylist.refresh();
+                    showInfoAlert("Song Removed", "The song has been successfully removed from the playlist.");
+                } catch (Exception e) {
+                    showErrorAlert("Error", "Could not remove song from playlist: " + e.getMessage());
+                }
+            }
+        } else {
+            showInfoAlert("No Song Selected", "Please select a song from the playlist to remove.");
+        }
+    }
 
 }
 
