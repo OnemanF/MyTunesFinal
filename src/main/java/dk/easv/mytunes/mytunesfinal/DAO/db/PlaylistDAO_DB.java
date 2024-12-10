@@ -23,12 +23,16 @@ public class PlaylistDAO_DB implements IPlaylistDataAccess {
         String sql = "SELECT \n" +
                 "    p.PlaylistID, \n" +
                 "    p.Name, \n" +
-                "    COUNT(DISTINCT sop.SongID) AS SongsDuration, \n" +
-                "    COALESCE(SUM(s.Duration), 0) AS SongsAmount\n" +
+                "    COUNT(DISTINCT sop.SongID) AS SongsAmount, \n" +
+                "    COALESCE(SUM(s.Duration), 0) AS SongsDuration\n" +
                 "FROM Playlist p\n" +
                 "LEFT JOIN SongsOnPlaylist sop ON p.PlaylistID = sop.PlaylistID\n" +
                 "LEFT JOIN Song s ON sop.SongID = s.SongID\n" +
                 "GROUP BY p.PlaylistID, p.Name;\n";
+
+
+
+
 
 
         try (Connection conn = playlistdatabaseConnector.getConnection();
@@ -40,10 +44,15 @@ public class PlaylistDAO_DB implements IPlaylistDataAccess {
             while (rs.next()) {
                 int playlistID = rs.getInt("PlaylistID");
                 String name = rs.getString("Name");
-                int songsDuration = rs.getInt("SongsDuration");
                 int songsAmount = rs.getInt("SongsAmount");
+                int songsDuration = rs.getInt("SongsDuration");
+
                 Playlist playlist = new Playlist(playlistID, name, songsAmount, songsDuration );
                 allPlaylists.add(playlist);
+
+                System.out.println("SongsAmount: " + rs.getString("SongsAmount"));
+                System.out.println("SongsDuration: " + rs.getString("SongsDuration"));
+
 
 
             }
