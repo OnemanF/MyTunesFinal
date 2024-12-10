@@ -20,11 +20,15 @@ public class PlaylistDAO_DB implements IPlaylistDataAccess {
     @Override
     public List<Playlist> getAllPlaylists() throws Exception {
         List<Playlist> allPlaylists = new ArrayList<>();
-        String sql = "SELECT playlist.PlaylistID, playlist.Name, COUNT(sop.SongID) as SongsAmount, coalesce(SUM(Song.Duration),0) as SongsDuration\n" +
-                "From Playlist playlist\n" +
-                "Left JOIN SongsOnPlaylist sop ON playlist.PlaylistID = sop.PlaylistID\n" +
-                "Left JOIN Song song ON sop.SongID = song.SongID\n" +
-                "GROUP BY playlist.PlaylistID, playlist.Name";
+        String sql = "SELECT \n" +
+                "    p.PlaylistID, \n" +
+                "    p.Name, \n" +
+                "    COUNT(DISTINCT sop.SongID) AS SongsAmount, \n" +
+                "    COALESCE(SUM(s.Duration), 0) AS SongsDuration\n" +
+                "FROM Playlist p\n" +
+                "LEFT JOIN SongsOnPlaylist sop ON p.PlaylistID = sop.PlaylistID\n" +
+                "LEFT JOIN Song s ON sop.SongID = s.SongID\n" +
+                "GROUP BY p.PlaylistID, p.Name;\n";
 
 
         try (Connection conn = playlistdatabaseConnector.getConnection();
@@ -51,7 +55,7 @@ public class PlaylistDAO_DB implements IPlaylistDataAccess {
 
     public int getSongCountForPlaylist(int playlistID) {
         // SQL query to count songs in a specific playlist
-        String sql = "SELECT COUNT(*) FROM dbo.SongsOnPlaylist WHERE PlaylistID = ?";
+        String sql = "SELECT count(*) FROM dbo.SongsOnPlaylist WHERE PlaylistID = ?";
 
         try (Connection conn = playlistdatabaseConnector.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
