@@ -23,8 +23,8 @@ public class PlaylistDAO_DB implements IPlaylistDataAccess {
         String sql = "SELECT \n" +
                 "    p.PlaylistID, \n" +
                 "    p.Name, \n" +
-                "    COUNT(DISTINCT sop.SongID) AS SongsAmount, \n" +
-                "    COALESCE(SUM(s.Duration), 0) AS SongsDuration\n" +
+                "    COUNT(DISTINCT sop.SongID) AS SongsDuration, \n" +
+                "    COALESCE(SUM(s.Duration), 0) AS SongsAmount\n" +
                 "FROM Playlist p\n" +
                 "LEFT JOIN SongsOnPlaylist sop ON p.PlaylistID = sop.PlaylistID\n" +
                 "LEFT JOIN Song s ON sop.SongID = s.SongID\n" +
