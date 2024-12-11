@@ -16,7 +16,7 @@ public class MediaPlayerController {
         this.playlistDAO = playlistDAO;
     }
 
-    public void playTheSong(int id) {
+    /*public void playTheSong(int id) {
         Song song = playlistDAO.getSongById(id); // Fetch the song by ID
         if (song != null) {
             try {
@@ -45,7 +45,7 @@ public class MediaPlayerController {
         } else {
             System.out.println("Song with ID " + id + " not found.");
         }
-    }
+    }*/
 }
 
 
