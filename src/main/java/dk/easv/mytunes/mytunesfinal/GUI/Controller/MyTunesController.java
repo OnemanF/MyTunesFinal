@@ -87,19 +87,18 @@ public class MyTunesController implements Initializable {
     private List<Song> songPaths; // List of song file paths.
     private String folder = "music\\";
 
-
     private final ObservableList<Song> songsOnPlaylist = FXCollections.observableArrayList();
     private PlaylistDAO_DB playlistDAO;
-
     private PlaylistManager playlistManager;
+    private MediaPlayerController mediaPlayerController;
+
 
     public MyTunesController() {
-
         try {
-
             this.playlistModel = new PlaylistModel();
             playlistManager = new PlaylistManager();
             playlistDAO = new PlaylistDAO_DB();
+            this.mediaPlayerController = new MediaPlayerController(playlistDAO);
 
             songModel = new SongModel();
 
@@ -126,6 +125,8 @@ public class MyTunesController implements Initializable {
         setupEventListeners();
         setupPlaylistSelectionListener();
         volumeSlider.setValue(0.5);
+        setupDoubleClickToPlay();
+        setupDoubleClickToPlaySongs();
     }
 
 
@@ -579,6 +580,34 @@ try{
         } else {
             showInfoAlert("No Song Selected", "Please select a song from the playlist to remove.");
         }
+    }
+
+    private void setupDoubleClickToPlay(){
+        //double-click handler for tblSongsOnPlaylist
+        tblSongsOnPlaylist.setOnMouseClicked(mouseEvent -> {
+            if (mouseEvent.getClickCount()==2){
+                Song selectedSong = tblSongsOnPlaylist.getSelectionModel().getSelectedItem();
+                if (selectedSong != null) {
+                    mediaPlayerController.playTheSong(selectedSong.getId());
+                } else {
+                    System.out.println("No song selected.");
+                }
+            }
+        });
+    }
+
+    private void setupDoubleClickToPlaySongs(){
+        //double-click handler for tblSongsOnPlaylist
+        tblSongs.setOnMouseClicked(mouseEvent -> {
+            if (mouseEvent.getClickCount()==2){
+                Song selectedSong = tblSongs.getSelectionModel().getSelectedItem();
+                if (selectedSong != null) {
+                    mediaPlayerController.playTheSong(selectedSong.getId());
+                } else {
+                    System.out.println("No song selected.");
+                }
+            }
+        });
     }
 
 }
