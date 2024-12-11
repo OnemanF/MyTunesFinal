@@ -3,7 +3,11 @@ package dk.easv.mytunes.mytunesfinal.DAO.db;
 import dk.easv.mytunes.mytunesfinal.BE.Playlist;
 import dk.easv.mytunes.mytunesfinal.BE.Song;
 import dk.easv.mytunes.mytunesfinal.DAO.IPlaylistDataAccess;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.Media;
 
+
+//import javax.print.attribute.standard.Media;
 import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
@@ -11,6 +15,7 @@ import java.util.List;
 
 public class PlaylistDAO_DB implements IPlaylistDataAccess {
     private DBConnector playlistdatabaseConnector;
+    private MediaPlayer mediaPlayer;
 
     public PlaylistDAO_DB() throws IOException {
         playlistdatabaseConnector = new DBConnector();
@@ -31,14 +36,9 @@ public class PlaylistDAO_DB implements IPlaylistDataAccess {
                 "GROUP BY p.PlaylistID, p.Name;\n";
 
 
-
-
-
-
         try (Connection conn = playlistdatabaseConnector.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
-
 
 
             while (rs.next()) {
@@ -47,12 +47,11 @@ public class PlaylistDAO_DB implements IPlaylistDataAccess {
                 int songsAmount = rs.getInt("SongsAmount");
                 int songsDuration = rs.getInt("SongsDuration");
 
-                Playlist playlist = new Playlist(playlistID, name, songsAmount, songsDuration );
+                Playlist playlist = new Playlist(playlistID, name, songsAmount, songsDuration);
                 allPlaylists.add(playlist);
 
                 System.out.println("SongsAmount: " + rs.getString("SongsAmount"));
                 System.out.println("SongsDuration: " + rs.getString("SongsDuration"));
-
 
 
             }
@@ -152,7 +151,7 @@ public class PlaylistDAO_DB implements IPlaylistDataAccess {
             try (ResultSet generatedKeys = pstmtP.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
                     // Assuming your Playlist table has an auto-incremented ID
-                    newPlaylistID  = generatedKeys.getInt(1);
+                    newPlaylistID = generatedKeys.getInt(1);
 
                 } else {
                     throw new SQLException("Creating playlist failed, no ID obtained.");
@@ -163,9 +162,9 @@ public class PlaylistDAO_DB implements IPlaylistDataAccess {
             playlist.setId(newPlaylistID);
             return playlist;
         } catch (SQLException ex) {
-            try(Connection conn = playlistdatabaseConnector.getConnection()) {
+            try (Connection conn = playlistdatabaseConnector.getConnection()) {
                 conn.rollback();
-            }catch (SQLException e){
+            } catch (SQLException e) {
                 ex.addSuppressed(e);
             }
             // Handle any SQL exceptions here
@@ -189,17 +188,17 @@ public class PlaylistDAO_DB implements IPlaylistDataAccess {
             throw new RuntimeException("Error adding song to playlist: " + e.getMessage());
         }
     }
+
     public void deletePlaylist(Playlist playlist) throws Exception {
         String sql = "DELETE FROM Playlist WHERE PlaylistID = ?";
 
         try (Connection conn = playlistdatabaseConnector.getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql)) {
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setInt(1, playlist.getId()); //Sætter playlist ID som parameter i SQL-forespørgslen
 
             pstmt.executeUpdate(); //udfører sletning
-        }
-        catch (SQLException ex) {
+        } catch (SQLException ex) {
             ex.printStackTrace();
             throw new RuntimeException("Error deleting playlist: " + ex.getMessage());
         }
@@ -224,13 +223,35 @@ public class PlaylistDAO_DB implements IPlaylistDataAccess {
         try (Connection conn = playlistdatabaseConnector.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-                 pstmt.setInt(1, playlistId);
-                 pstmt.setInt(2, songId);
+            pstmt.setInt(1, playlistId);
+            pstmt.setInt(2, songId);
 
-                 pstmt.executeUpdate();
+            pstmt.executeUpdate();
         } catch (SQLException ex) {
-                 ex.printStackTrace();
-                 throw new RuntimeException("Error deleting song from playlist: " + ex.getMessage(), ex);
+            ex.printStackTrace();
+            throw new RuntimeException("Error deleting song from playlist: " + ex.getMessage(), ex);
         }
     }
-}
+
+        public Song getSongById(int id) {
+            String sql = "SELECT * FROM Song WHERE SongID = ?";
+            try (Connection conn = playlistdatabaseConnector.getConnection();
+                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setInt(1, id);
+                ResultSet rs = pstmt.executeQuery();
+                if (rs.next()) {
+                    return new Song(
+                            rs.getInt("SongID"),
+                            rs.getString("Title"),
+                            rs.getString("ArtistName"),
+                            rs.getString("GenreID"),
+                            rs.getInt("Duration"),
+                            rs.getString("FilePath")
+                    );
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null; // Return null if no song is found or an error occurs
+        }
+    }

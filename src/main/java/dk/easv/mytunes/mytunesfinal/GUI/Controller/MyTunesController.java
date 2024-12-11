@@ -87,19 +87,18 @@ public class MyTunesController implements Initializable {
     private List<Song> songPaths; // List of song file paths.
     private String folder = "music\\";
 
-
     private final ObservableList<Song> songsOnPlaylist = FXCollections.observableArrayList();
     private PlaylistDAO_DB playlistDAO;
-
     private PlaylistManager playlistManager;
+    private MediaPlayerController mediaPlayerController;
+
 
     public MyTunesController() {
-
         try {
-
             this.playlistModel = new PlaylistModel();
             playlistManager = new PlaylistManager();
             playlistDAO = new PlaylistDAO_DB();
+            this.mediaPlayerController = new MediaPlayerController(playlistDAO);
 
             songModel = new SongModel();
 
@@ -126,7 +125,11 @@ public class MyTunesController implements Initializable {
         setupEventListeners();
         setupPlaylistSelectionListener();
         volumeSlider.setValue(0.5);
+        setupDoubleClickToPlay();
+        setupDoubleClickToPlaySongs();
     }
+
+
 
 
 
@@ -317,12 +320,44 @@ public class MyTunesController implements Initializable {
 
 
         }
-        
+
         songPaths = items.stream().toList(); // Convert to a List<String>.
         currentSongIndex = 0; // Reset to the start of the playlist.
 
         playSong(currentSongIndex);
     }
+
+    public void playTheSong(int index) {
+        Song song = playlistDAO.getSongById(index); // Fetch the song by ID
+        if (song != null) {
+            try {
+                if (mediaPlayer != null) {
+                    mediaPlayer.stop(); // Stop the current song
+                }
+
+                String fullPath = folder + song.getFilePath();
+                File file = new File(fullPath);
+
+                if (!file.exists()) {
+                    System.out.println("File not found: " + fullPath);
+                    return; // Exit if the file does not exist
+                }
+
+                // Create a new Media object with the song's file path
+                Media media = new Media(file.toURI().toString());
+                mediaPlayer = new MediaPlayer(media);
+                mediaPlayer.play();
+
+                System.out.println("Now playing: " + song.getTitle());
+            } catch (Exception e) {
+                System.out.println("Error playing song: " + e.getMessage());
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("Song with ID " + index + " not found.");
+        }
+    }
+
 
     private void playSong(int index)  {
         if (index >= songPaths.size()) {
@@ -579,6 +614,34 @@ try{
         } else {
             showInfoAlert("No Song Selected", "Please select a song from the playlist to remove.");
         }
+    }
+
+    private void setupDoubleClickToPlay(){
+        //double-click handler for tblSongsOnPlaylist
+        tblSongsOnPlaylist.setOnMouseClicked(mouseEvent -> {
+            if (mouseEvent.getClickCount()==2){
+                Song selectedSong = tblSongsOnPlaylist.getSelectionModel().getSelectedItem();
+                if (selectedSong != null) {
+                    playTheSong(selectedSong.getId());
+                } else {
+                    System.out.println("No song selected.");
+                }
+            }
+        });
+    }
+
+    private void setupDoubleClickToPlaySongs(){
+        //double-click handler for tblSongsOnPlaylist
+        tblSongs.setOnMouseClicked(mouseEvent -> {
+            if (mouseEvent.getClickCount()==2){
+                Song selectedSong = tblSongs.getSelectionModel().getSelectedItem();
+                if (selectedSong != null) {
+                    playTheSong(selectedSong.getId());
+                } else {
+                    System.out.println("No song selected.");
+                }
+            }
+        });
     }
 
 }
