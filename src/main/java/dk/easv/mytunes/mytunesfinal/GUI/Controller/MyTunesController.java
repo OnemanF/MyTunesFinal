@@ -173,16 +173,18 @@ public class MyTunesController implements Initializable {
     }
 
     private void setupPlaylistSelectionListener() {
-        // Add selection listener for playlist TableView
-        tblPlaylist.setOnMouseClicked(event -> {
-            Playlist selectedPlaylist = tblPlaylist.getSelectionModel().getSelectedItem();
-            if (selectedPlaylist != null) {
-                int playlistID = selectedPlaylist.getId();
+        tblPlaylist.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                int playlistID = newSelection.getId();
                 List<Song> fetchedSongs = playlistDAO.getSongsForPlaylist(playlistID);
                 songsOnPlaylist.setAll(fetchedSongs);
+                songPaths = fetchedSongs; // Opdaterer songPaths med sangene fra playlisten
+            } else {
+                songPaths = null; // Hvis ingen playliste er valgt, nulstil songPaths
             }
         });
     }
+
 
     // Loads playlists into the table view.
     private void loadPlaylists() {
@@ -296,65 +298,58 @@ public class MyTunesController implements Initializable {
 
     //Onplay and onStop actionevents and read songs in song tableveiw
     public void onPlay(ActionEvent actionEvent) {
-        // Retrieve all song paths from the TableView.
-        ObservableList<Song> items = tblSongs.getItems();
-        if (items.isEmpty()) {
-            System.out.println("No songs available to play!");
+        if (songPaths == null || songPaths.isEmpty()) {
+            showInfoAlert("No Songs", "There are no songs to play!");
             return;
         }
 
         if (mediaPlayer != null) {
-            // If mediaPlayer is paused, resume playback
             MediaPlayer.Status status = mediaPlayer.getStatus();
             if (status == MediaPlayer.Status.PAUSED || status == MediaPlayer.Status.READY) {
                 mediaPlayer.play();
-                System.out.println("Resumed playback.");
                 return;
-                }
-            else if (status == MediaPlayer.Status.PLAYING) {
-                System.out.println("Already playing, moron.");
+            } else if (status == MediaPlayer.Status.PLAYING) {
                 return;
             }
-
-
         }
-        
-        songPaths = items.stream().toList(); // Convert to a List<String>.
-        currentSongIndex = 0; // Reset to the start of the playlist.
 
+        currentSongIndex = 0; // Start fra den første sang
         playSong(currentSongIndex);
     }
 
-    private void playSong(int index)  {
-        if (index >= songPaths.size()) {
-            System.out.println("End of playlist.");
-            return; // Stop if we reach the end of the playlist.
+
+    private void playSong(int index) {
+        if (index >= songPaths.size() || index < 0) {
+            System.out.println("Invalid index: " + index);
+            return;
         }
-try{
-        Song Song = songPaths.get(index);
 
-        String path = folder + Song.getFilePath();
-        System.out.println("Now playing: " + path);
-        crntTrackTxt.setText("Current Track: " + Song.getTitle() + " - " + Song.getArtist());
+        try {
+            Song song = songPaths.get(index);
 
-        // Create Media and MediaPlayer for the current song.
-        Media media = new Media(new File(path).toURI().toString());
-        mediaPlayer = new MediaPlayer(media);
-        // Start playback.
-        mediaPlayer.play();
-        setupVolume();
-        setupProgressBar();
+            String path = folder + song.getFilePath();
+            Media media = new Media(new File(path).toURI().toString());
+            mediaPlayer = new MediaPlayer(media);
+            mediaPlayer.play();
 
-        // Set callback to play the next song after the current one ends.
-        mediaPlayer.setOnEndOfMedia(() -> {
-            currentSongIndex++;
-            playSong(currentSongIndex);
+            setupVolume();
+            setupProgressBar();
 
-        });
-} catch (Exception e) {
-    System.out.println( e.getMessage());
-}
+            updateCurrentTrackDisplay(song);
+
+            mediaPlayer.setOnEndOfMedia(() -> {
+                currentSongIndex++;
+                if (currentSongIndex >= songPaths.size()) {
+                    currentSongIndex = 0;
+                }
+                playSong(currentSongIndex);
+            });
+        } catch (Exception e) {
+            showErrorAlert("Playback Error", "Could not play song: " + e.getMessage());
+        }
     }
+
+
 
     public void onStop(ActionEvent actionEvent) {
         if (mediaPlayer != null) {
@@ -363,16 +358,40 @@ try{
     }
 
     public void onNext(ActionEvent actionEvent) {
+        if (songPaths == null || songPaths.isEmpty()) {
+            showInfoAlert("No Songs", "There are no songs to play!");
+            return;
+        }
+
         mediaPlayer.stop();
         currentSongIndex++;
+
+        // Loop back to the start if at the end
+        if (currentSongIndex >= songPaths.size()) {
+            currentSongIndex = 0;
+        }
+
         playSong(currentSongIndex);
     }
 
+
     public void onPrevious(ActionEvent actionEvent) {
+        if (songPaths == null || songPaths.isEmpty()) {
+            showInfoAlert("No Songs", "There are no songs to play!");
+            return;
+        }
+
         mediaPlayer.stop();
         currentSongIndex--;
+
+        // Loop back to the end if at the beginning
+        if (currentSongIndex < 0) {
+            currentSongIndex = songPaths.size() - 1;
+        }
+
         playSong(currentSongIndex);
     }
+
 
 
 
@@ -583,13 +602,12 @@ try{
         }
     }
 
-    private void setupDoubleClickToPlay(){
-        //double-click handler for tblSongsOnPlaylist
+    private void setupDoubleClickToPlay() {
         tblSongsOnPlaylist.setOnMouseClicked(mouseEvent -> {
-            if (mouseEvent.getClickCount()==2){
+            if (mouseEvent.getClickCount() == 2) {
                 Song selectedSong = tblSongsOnPlaylist.getSelectionModel().getSelectedItem();
                 if (selectedSong != null) {
-                    mediaPlayerController.playTheSong(selectedSong.getId());
+                    playSongFromSelection(selectedSong); // Ny metode til afspilning
                 } else {
                     System.out.println("No song selected.");
                 }
@@ -597,19 +615,54 @@ try{
         });
     }
 
-    private void setupDoubleClickToPlaySongs(){
-        //double-click handler for tblSongsOnPlaylist
+
+    private void setupDoubleClickToPlaySongs() {
         tblSongs.setOnMouseClicked(mouseEvent -> {
-            if (mouseEvent.getClickCount()==2){
+            if (mouseEvent.getClickCount() == 2) {
                 Song selectedSong = tblSongs.getSelectionModel().getSelectedItem();
                 if (selectedSong != null) {
-                    mediaPlayerController.playTheSong(selectedSong.getId());
+                    playSongFromSelection(selectedSong); // Ny metode til afspilning
                 } else {
                     System.out.println("No song selected.");
                 }
             }
         });
     }
+    private void playSongFromSelection(Song song) {
+        try {
+            if (mediaPlayer != null) {
+                mediaPlayer.stop(); // Stop tidligere afspilning
+            }
+
+            String path = folder + song.getFilePath();
+            Media media = new Media(new File(path).toURI().toString());
+            mediaPlayer = new MediaPlayer(media);
+
+            // Start afspilning
+            mediaPlayer.play();
+            setupVolume(); // Genbrug eksisterende volume-setup
+            setupProgressBar(); // Genbrug eksisterende progress bar-setup
+
+            // Opdater current track
+            crntTrackTxt.setText("Current Track: " + song.getTitle() + " - " + song.getArtist());
+
+            // Sæt callback for næste sang (hvis det ønskes)
+            mediaPlayer.setOnEndOfMedia(() -> crntTrackTxt.setText("Track finished."));
+
+        } catch (Exception e) {
+            showErrorAlert("Playback Error", "Could not play the selected song: " + e.getMessage());
+        }
+    }
+    private void updateCurrentTrackDisplay(Song song) {
+        if (song != null) {
+            crntTrackTxt.setText("Current Track: " + song.getTitle() + " - " + song.getArtist());
+        } else {
+            crntTrackTxt.setText("No Track Playing");
+        }
+    }
+
+
+
 
 }
 
