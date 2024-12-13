@@ -358,6 +358,9 @@ public class MyTunesController implements Initializable {
     }
 
     public void onNext(ActionEvent actionEvent) {
+
+        updateSongPathsFromSelection();
+
         if (songPaths == null || songPaths.isEmpty()) {
             showInfoAlert("No Songs", "There are no songs to play!");
             return;
@@ -376,6 +379,9 @@ public class MyTunesController implements Initializable {
 
 
     public void onPrevious(ActionEvent actionEvent) {
+
+        updateSongPathsFromSelection();
+
         if (songPaths == null || songPaths.isEmpty()) {
             showInfoAlert("No Songs", "There are no songs to play!");
             return;
@@ -661,8 +667,17 @@ public class MyTunesController implements Initializable {
         }
     }
 
-
-
-
+    private void updateSongPathsFromSelection() {
+        if (tblSongs.isFocused()) {
+            // Hvis song-tabellen er aktiv
+            songPaths = tblSongs.getItems().stream().toList();
+        } else if (tblSongsOnPlaylist.isFocused()) {
+            // Hvis playlist-tabellen er aktiv
+            songPaths = tblSongsOnPlaylist.getItems().stream().toList();
+        } else {
+            // Hvis ingen tabel er fokuseret, nulstil songPaths
+            songPaths = null;
+        }
+    }
 }
 
