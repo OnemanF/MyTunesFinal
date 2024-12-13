@@ -190,17 +190,28 @@ public class PlaylistDAO_DB implements IPlaylistDataAccess {
     }
 
     public void deletePlaylist(Playlist playlist) throws Exception {
-        String sql = "DELETE FROM Playlist WHERE PlaylistID = ?";
+        String removeSongsSQL = "DELETE FROM SongsOnPlaylist WHERE PlaylistID = ?";
+        String deletePlaylistSQL = "DELETE FROM Playlist WHERE PlaylistID = ?";
 
-        try (Connection conn = playlistdatabaseConnector.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (Connection conn = playlistdatabaseConnector.getConnection()) {
+            conn.setAutoCommit(false); // Start transaction
 
-            pstmt.setInt(1, playlist.getId()); //Sætter playlist ID som parameter i SQL-forespørgslen
+            try (PreparedStatement removeSongsStmt = conn.prepareStatement(removeSongsSQL);
+                 PreparedStatement deletePlaylistStmt = conn.prepareStatement(deletePlaylistSQL)) {
 
-            pstmt.executeUpdate(); //udfører sletning
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-            throw new RuntimeException("Error deleting playlist: " + ex.getMessage());
+                // Fjern alle sange fra playlisten
+                removeSongsStmt.setInt(1, playlist.getId());
+                removeSongsStmt.executeUpdate();
+
+                // Slet selve playlisten
+                deletePlaylistStmt.setInt(1, playlist.getId());
+                deletePlaylistStmt.executeUpdate();
+
+                conn.commit(); // Commit transaction
+            } catch (SQLException e) {
+                conn.rollback(); // Rollback transaction ved fejl
+                throw new Exception("Error deleting playlist: " + e.getMessage(), e);
+            }
         }
     }
 
@@ -219,7 +230,6 @@ public class PlaylistDAO_DB implements IPlaylistDataAccess {
 
     public void removeSongFromPlaylist(int playlistId, int songId) throws Exception {
         String sql = "DELETE FROM SongsOnPlaylist WHERE PlaylistID = ? AND SongID = ?";
-
         try (Connection conn = playlistdatabaseConnector.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
@@ -254,4 +264,5 @@ public class PlaylistDAO_DB implements IPlaylistDataAccess {
             }
             return null; // Return null if no song is found or an error occurs
         }
-    }
+        }
+

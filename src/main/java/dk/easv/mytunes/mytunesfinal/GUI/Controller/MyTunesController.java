@@ -518,24 +518,25 @@ try{
             Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
             confirmation.setTitle("Delete Playlist");
             confirmation.setHeaderText("Are you sure you want to delete this playlist?");
-            confirmation.setContentText("Playlist" + selectedPlaylist.getName());
+            confirmation.setContentText("Playlist: " + selectedPlaylist.getName());
 
             Optional<ButtonType> result = confirmation.showAndWait();
             if (result.isPresent() && result.get() == ButtonType.OK) {
                 try {
-                    playlistManager.deletePlaylist(selectedPlaylist);
+                    playlistManager.deletePlaylist(selectedPlaylist); // Opdateret metode
                     playlistModel.getPlaylists().remove(selectedPlaylist);
                     tblPlaylist.refresh();
 
                     showInfoAlert("Playlist Deleted", "The playlist has been successfully deleted.");
                 } catch (Exception e) {
-                    showErrorAlert("Error", "could not delete playlist:" + e.getMessage());
+                    showErrorAlert("Error", "Could not delete playlist: " + e.getMessage());
                 }
-            } else {
-                showInfoAlert("No Playlist Selected", "Please select a playlist to delete.");
             }
+        } else {
+            showInfoAlert("No Playlist Selected", "Please select a playlist to delete.");
         }
-    }
+
+}
     @FXML
     private void deleteSong(ActionEvent actionEvent) {
         Song selectedSong = tblSongs.getSelectionModel().getSelectedItem();
