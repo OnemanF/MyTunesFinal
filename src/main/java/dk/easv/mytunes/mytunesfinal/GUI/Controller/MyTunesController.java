@@ -192,6 +192,8 @@ public class MyTunesController implements Initializable {
         tblPlaylist.refresh();
     }
 
+
+
     //creating new playlist
     public void createNewPlaylist(ActionEvent actionEvent) {
         TextInputDialog dialog = new TextInputDialog();
@@ -359,7 +361,7 @@ public class MyTunesController implements Initializable {
 
     public void onNext(ActionEvent actionEvent) {
 
-        updateSongPathsFromSelection();
+        //updateSongPathsFromSelection();
 
         if (songPaths == null || songPaths.isEmpty()) {
             showInfoAlert("No Songs", "There are no songs to play!");
@@ -380,7 +382,7 @@ public class MyTunesController implements Initializable {
 
     public void onPrevious(ActionEvent actionEvent) {
 
-        updateSongPathsFromSelection();
+        //updateSongPathsFromSelection();
 
         if (songPaths == null || songPaths.isEmpty()) {
             showInfoAlert("No Songs", "There are no songs to play!");
@@ -420,6 +422,7 @@ public class MyTunesController implements Initializable {
             playlistModel.addSongToPlaylist(selectedPlaylist.getId(), selectedSong.getId());
 
             // Refresh the playlist view
+            loadPlaylists();
             refreshPlaylistView(selectedPlaylist);
 
             // Notify the user
@@ -457,17 +460,25 @@ public class MyTunesController implements Initializable {
 
 
     public void setupVolume() {
+        volumeSlider.setMin(0.0);
+        volumeSlider.setMax(1.0);
+        volumeSlider.setBlockIncrement(0.05);
 
-            volumeSlider.setMin(0.0); // Set minimum value to nothing
-            volumeSlider.setMax(1.0); // Set max value to full
-            volumeSlider.setBlockIncrement(0.05); // Set the value for increments
-            if (mediaPlayer != null) {
-                mediaPlayer.setVolume(volumeSlider.getValue());  // Set initial volume
-                volumeSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
-                    mediaPlayer.setVolume(newValue.doubleValue()); // Listen for change in slider
-                });
-            }
+        if (mediaPlayer != null) {
+            // Sync slider's initial position with media player's current volume
+            volumeSlider.setValue(mediaPlayer.getVolume());
+
+            // Add listener to sync changes in slider to media player's volume
+            volumeSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+                double clampedValue = Math.max(0.0, Math.min(1.0, newValue.doubleValue())); // Clamp to [0, 1]
+                mediaPlayer.setVolume(clampedValue);
+            });
+        } else {
+            // Set an initial slider value for when the mediaPlayer is null
+            volumeSlider.setValue(0.5); // Default to 50%
+        }
     }
+
 
     public void setupProgressBar(){
         progressBar.setProgress(mediaPlayer.getCurrentTime().toSeconds() / 100);
@@ -667,7 +678,7 @@ public class MyTunesController implements Initializable {
         }
     }
 
-    private void updateSongPathsFromSelection() {
+    /*private void updateSongPathsFromSelection() {
         if (tblSongs.isFocused()) {
             // Hvis song-tabellen er aktiv
             songPaths = tblSongs.getItems().stream().toList();
@@ -678,6 +689,6 @@ public class MyTunesController implements Initializable {
             // Hvis ingen tabel er fokuseret, nulstil songPaths
             songPaths = null;
         }
-    }
+    }*/
 }
 

@@ -59,5 +59,6 @@ public class SongModel {
         songManager.deleteSong(deletedSong);
         songsToBeViewed.remove(deletedSong);
     }
+    
 
 }
