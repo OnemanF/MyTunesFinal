@@ -26,6 +26,8 @@ import javafx.util.Duration;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -91,6 +93,8 @@ public class MyTunesController implements Initializable {
     private PlaylistDAO_DB playlistDAO;
     private PlaylistManager playlistManager;
     private MediaPlayerController mediaPlayerController;
+
+    private double currentVolume = 0.05;
 
 
     public MyTunesController() {
@@ -334,6 +338,8 @@ public class MyTunesController implements Initializable {
             mediaPlayer = new MediaPlayer(media);
             mediaPlayer.play();
 
+            mediaPlayer.setVolume(currentVolume);
+
             setupVolume();
             setupProgressBar();
 
@@ -377,6 +383,8 @@ public class MyTunesController implements Initializable {
         }
 
         playSong(currentSongIndex);
+        updateSongOrderInDatabase();
+
     }
 
 
@@ -398,6 +406,8 @@ public class MyTunesController implements Initializable {
         }
 
         playSong(currentSongIndex);
+        updateSongOrderInDatabase();
+
     }
 
 
@@ -465,19 +475,16 @@ public class MyTunesController implements Initializable {
         volumeSlider.setBlockIncrement(0.05);
 
         if (mediaPlayer != null) {
-            // Sync slider's initial position with media player's current volume
-            volumeSlider.setValue(mediaPlayer.getVolume());
+            mediaPlayer.setVolume(currentVolume); // Set initial volume
+            volumeSlider.setValue(currentVolume); // Set the slider to the current volume
 
-            // Add listener to sync changes in slider to media player's volume
             volumeSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
-                double clampedValue = Math.max(0.0, Math.min(1.0, newValue.doubleValue())); // Clamp to [0, 1]
-                mediaPlayer.setVolume(clampedValue);
+                currentVolume = newValue.doubleValue(); // Update the currentVolume
+                mediaPlayer.setVolume(currentVolume);
             });
-        } else {
-            // Set an initial slider value for when the mediaPlayer is null
-            volumeSlider.setValue(0.5); // Default to 50%
         }
     }
+
 
 
     public void setupProgressBar(){
@@ -592,6 +599,8 @@ public class MyTunesController implements Initializable {
         public void onBtnClose(ActionEvent actionEvent) {
             Platform.exit();
         }
+
+
     @FXML
     private void removeSongFromPlaylist(ActionEvent actionEvent) {
         Song selectedSong = tblSongsOnPlaylist.getSelectionModel().getSelectedItem();
@@ -690,5 +699,67 @@ public class MyTunesController implements Initializable {
             songPaths = null;
         }
     }*/
+
+    // Updates the order of songs in the playlist and database
+    private void updateSongOrderInDatabase() {
+        Playlist selectedPlaylist = tblPlaylist.getSelectionModel().getSelectedItem();
+        if (selectedPlaylist != null) {
+            List<Song> songs = new ArrayList<>(tblSongsOnPlaylist.getItems());
+            for (int index = 0; index < songs.size(); index++) {
+                songs.get(index).setOrderIndex(index); // Update the order index in the Song object
+            }
+
+            try {
+                // Update the database with the new order
+                playlistModel.updateSongOrder(selectedPlaylist.getId(), songs);
+                // Refresh the TableView to reflect the new order
+                tblSongsOnPlaylist.refresh();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+
+
+    public void onUp(ActionEvent actionEvent) {
+        int selectedIndex = tblSongsOnPlaylist.getSelectionModel().getSelectedIndex();
+
+        if (selectedIndex > 0) {
+            ObservableList<Song> songs = tblSongsOnPlaylist.getItems();
+
+            // Swap elements in the list
+            Song songToMoveUp = songs.get(selectedIndex);
+            songs.set(selectedIndex, songs.get(selectedIndex - 1));
+            songs.set(selectedIndex - 1, songToMoveUp);
+
+            // Update the selection and refresh the TableView
+            tblSongsOnPlaylist.getSelectionModel().select(selectedIndex - 1);
+
+            updateSongOrderInDatabase();// Save the new order to the database
+
+        }
+    }
+
+    public void onDown(ActionEvent actionEvent) {
+        int selectedIndex = tblSongsOnPlaylist.getSelectionModel().getSelectedIndex();
+
+        if (selectedIndex >= 0 && selectedIndex < tblSongsOnPlaylist.getItems().size() - 1) {
+            ObservableList<Song> songs = tblSongsOnPlaylist.getItems();
+
+            // Swap elements in the list
+            Song songToMoveDown = songs.get(selectedIndex);
+            songs.set(selectedIndex, songs.get(selectedIndex + 1));
+            songs.set(selectedIndex + 1, songToMoveDown);
+
+            // Update the selection and refresh the TableView
+            tblSongsOnPlaylist.getSelectionModel().select(selectedIndex + 1);
+
+            updateSongOrderInDatabase(); // Save the new order to the database
+
+        }
+    }
+
+
 }
 

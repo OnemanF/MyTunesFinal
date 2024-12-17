@@ -131,14 +131,17 @@ public class AddUpdateSong {
                             artistField.getText(),
                             genreComboBox.getValue(),
                             Integer.parseInt(timeField.getText()),
-                            filePathField.getText());
+                            filePathField.getText()
+                            );
+
                 } else {
                     return new Song(
                             titleField.getText(),
                             artistField.getText(),
                             genreComboBox.getValue(),
                             Integer.parseInt(timeField.getText()),
-                            filePathField.getText());
+                            filePathField.getText()
+                            );
                 }
             }
             return null;

@@ -42,7 +42,7 @@ public class PlaylistModel {
         playlist.setAll(playlistData);
     }
 
-    public ObservableList<Song> getPlaylistSongs() {
+    public ObservableList<Song> getSongsOnPlaylist() {
         return playlistSongs;
     }
 
@@ -109,4 +109,24 @@ public class PlaylistModel {
         playlistManager.removeSongFromPlaylist(playlistId, songId);
         loadSongsForPlaylist(playlistId);
     }
+
+    public void updateSongOrder(int playlistId, List<Song> songs) {
+        // Loop through the songs to update their new order in the ObservableList
+        for (int i = 0; i < songs.size(); i++) {
+            songs.get(i).setOrderIndex(i);
+        }
+        // Update the database with the new order
+        try {
+            playlistManager.updateSongOrderInPlaylist(playlistId, songs);
+            // Optionally reload songs for the playlist to reflect the new order in the UI
+            loadSongsForPlaylist(playlistId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Handle exceptions (e.g., log the error, show an error alert to the user)
+        }
+    }
+
+
+
+
 }

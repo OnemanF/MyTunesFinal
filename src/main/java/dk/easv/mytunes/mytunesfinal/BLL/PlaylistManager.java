@@ -6,6 +6,7 @@ import dk.easv.mytunes.mytunesfinal.DAO.IPlaylistDataAccess;
 import dk.easv.mytunes.mytunesfinal.DAO.db.PlaylistDAO_DB;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
 public class PlaylistManager {
@@ -51,4 +52,9 @@ public class PlaylistManager {
     public void removeSongFromPlaylist(int playlistId, int songId) throws Exception {
         playlistDAO_DB.removeSongFromPlaylist(playlistId, songId);
     }
+
+    public void updateSongOrderInPlaylist(int playlistId, List<Song> songs) throws SQLException {
+        playlistDAO_DB.updateSongOrder(playlistId, songs);
+    }
+
 }
