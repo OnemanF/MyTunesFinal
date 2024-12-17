@@ -618,6 +618,8 @@ public class MyTunesController implements Initializable {
                     playlistModel.removeSongFromPlaylist(selectedPlaylist.getId(), selectedSong.getId());
                     playlistModel.loadSongsForPlaylist(selectedPlaylist.getId());
                     tblSongsOnPlaylist.refresh();
+                    refreshPlaylistView(selectedPlaylist);
+                    loadPlaylists();
                     showInfoAlert("Song Removed", "The song has been successfully removed from the playlist.");
                 } catch (Exception e) {
                     showErrorAlert("Error", "Could not remove song from playlist: " + e.getMessage());
@@ -714,6 +716,9 @@ public class MyTunesController implements Initializable {
                 playlistModel.updateSongOrder(selectedPlaylist.getId(), songs);
                 // Refresh the TableView to reflect the new order
                 tblSongsOnPlaylist.refresh();
+
+
+
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
