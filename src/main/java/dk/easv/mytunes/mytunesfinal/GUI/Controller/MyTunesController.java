@@ -1,16 +1,15 @@
 package dk.easv.mytunes.mytunesfinal.GUI.Controller;
-
+//Project imports
 import dk.easv.mytunes.mytunesfinal.BE.Playlist;
 import dk.easv.mytunes.mytunesfinal.BE.Song;
 import dk.easv.mytunes.mytunesfinal.BLL.PlaylistManager;
 import dk.easv.mytunes.mytunesfinal.DAO.db.PlaylistDAO_DB;
 import dk.easv.mytunes.mytunesfinal.GUI.Model.PlaylistModel;
 import dk.easv.mytunes.mytunesfinal.GUI.Model.SongModel;
+//Java Imports
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -22,34 +21,25 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
-
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class MyTunesController implements Initializable {
-    //Table view
+    //Table views
     @FXML
     private TableView<Song> tblSongsOnPlaylist, tblSongs;
-
     @FXML
     private TableView<Playlist> tblPlaylist;
-    //Table columns
+
+    //Columns imports
     @FXML
     private TableColumn<Song, String> colTitle, colArtist, colGenre, colDuration;
-
     @FXML
     private TableColumn<Song, String> colTitleOnplaylist, colSongsArtist;
-
-    @FXML
-    private Button deleteSong;
-
-    //playlist table
     @FXML
     private TableColumn<Playlist, String> colName, colSongs, colSongsDuration;
 
@@ -57,9 +47,9 @@ public class MyTunesController implements Initializable {
     @FXML
     private TextField txtSongSearch;
 
+    //Labels imports
     @FXML
     private Label crntTrackTxt;
-
     @FXML
     private Label progressLbl;
 
@@ -76,23 +66,21 @@ public class MyTunesController implements Initializable {
     private Button searchButton, btnNewPlaylist;
 
     @FXML
-    private Button btnAddNewSong, btUpdateSong;
-
-    @FXML
     private AddUpdateSong dialogboxes = new AddUpdateSong();
 
     private SongModel songModel;
     private PlaylistModel playlistModel;
-
-    private MediaPlayer mediaPlayer;
-    private int currentSongIndex = 0; // Track the current song being played.
-    private List<Song> songPaths; // List of song file paths.
-    private String folder = "music\\";
-
-    private final ObservableList<Song> songsOnPlaylist = FXCollections.observableArrayList();
     private PlaylistDAO_DB playlistDAO;
     private PlaylistManager playlistManager;
-    private MediaPlayerController mediaPlayerController;
+
+    private MediaPlayer mediaPlayer;
+
+    private int currentSongIndex = 0; // Track the current song being played.
+
+    private List<Song> songPaths; // List of song file paths.
+    private String folder = "music\\"; //path to music folder
+
+    private final ObservableList<Song> songsOnPlaylist = FXCollections.observableArrayList();
 
     private double currentVolume = 0.05;
 
@@ -102,7 +90,6 @@ public class MyTunesController implements Initializable {
             this.playlistModel = new PlaylistModel();
             playlistManager = new PlaylistManager();
             playlistDAO = new PlaylistDAO_DB();
-            this.mediaPlayerController = new MediaPlayerController(playlistDAO);
 
             songModel = new SongModel();
 
@@ -240,27 +227,6 @@ public class MyTunesController implements Initializable {
         } else {
             showInfoAlert("No Song Selected", "Please select a song to update.");
         }
-        /*
-        tblSongsOnPlaylist.setItems(songModel.getObservableSongs());
-        if (selectedSong != null) {
-            // If update is pressed the boolean "isUpdating" returns true in order to differentiate between update and create.
-            Optional<Song> result = dialogboxes.showSongDialog(true, selectedSong);
-            result.ifPresent(song -> {
-                try {
-                    songModel.updateSong(song);
-                    tblSongs.refresh();
-                    tblSongsOnPlaylist.refresh();
-
-                } catch (Exception e) {
-                    throw new RuntimeException();
-                }
-            });
-        } else { //Displays message when no song is selected
-            if (selectedSong == null) {
-                //showAlert("No song selected", "Please select a song to update.");
-            }
-        }
-          */
 
     }
 
@@ -689,18 +655,6 @@ public class MyTunesController implements Initializable {
         }
     }
 
-    /*private void updateSongPathsFromSelection() {
-        if (tblSongs.isFocused()) {
-            // Hvis song-tabellen er aktiv
-            songPaths = tblSongs.getItems().stream().toList();
-        } else if (tblSongsOnPlaylist.isFocused()) {
-            // Hvis playlist-tabellen er aktiv
-            songPaths = tblSongsOnPlaylist.getItems().stream().toList();
-        } else {
-            // Hvis ingen tabel er fokuseret, nulstil songPaths
-            songPaths = null;
-        }
-    }*/
 
     // Updates the order of songs in the playlist and database
     private void updateSongOrderInDatabase() {

@@ -86,13 +86,7 @@ public class PlaylistDAO_DB implements IPlaylistDataAccess {
 
     public List<Song> getSongsForPlaylist(int playlistID) {
         List<Song> songs = new ArrayList<>();
-        String sql = /*" SELECT s.SongID, s.Title, s.Duration, s.FilePath " +
-                "FROM Songs s " +
-
-                "INNER JOIN SongsOnPlaylist sop ON s.SongID = sop.SongID " +
-                "WHERE sop.PlaylistID = ?";*/
-
-                "SELECT s.SongID, s.Title, s.Duration, s.FilePath, s.ArtistName, g.GenreName, sop.OrderIndex " +
+        String sql = "SELECT s.SongID, s.Title, s.Duration, s.FilePath, s.ArtistName, g.GenreName, sop.OrderIndex " +
                         "FROM Song s " +
                         "JOIN SongsOnPlaylist sop ON s.SongID = sop.SongID " +
                         "JOIN Genre g ON s.GenreID = g.GenreID " +

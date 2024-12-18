@@ -49,18 +49,6 @@ public class SongManager {
             throw e;
         }
 
-        /*
-        Artist artist = new Artist(-1, selectedSong.getArtist());
-        Genre genre = new Genre(-1, selectedSong.getGenre());
-        artist.setArtistID(artistDAO_DB.getArtistID(selectedSong.getArtist()));
-        genre.setGenreID(genreDAO_DB.getGenreID(selectedSong.getGenre()));
-        if (artist.getArtistID()== -1) {
-            artist = artistDAO_DB.insertArtist(new Artist(-1,selectedSong.getArtist()));
-
-        }
-        songDAO.updateSongs(selectedSong, artist.getArtistID(),genre.getGenreID());
-
-         */
     }
 
     private int ensureGenreExists(String genreName) throws Exception {
@@ -87,19 +75,7 @@ public class SongManager {
             throw e;
         }
     }
-        /*
-        Artist artist = new Artist(-1, newSong.getArtist());
-        Genre genre = new Genre(-1, newSong.getGenre());
-        artist.setArtistID(artistDAO_DB.getArtistID(newSong.getArtist()));
-        genre.setGenreID(genreDAO_DB.getGenreID(newSong.getGenre()));
-        if (artist.getArtistID()== -1) {
-            artist = artistDAO_DB.insertArtist(new Artist(-1,newSong.getArtist()));
 
-        }
-
-        return songDAO.addSong(newSong,artist.getArtistID(),genre.getGenreID());
-
-         */
     public void deleteSong(Song song) throws Exception {
         songDAO.deleteSong(song);
     }

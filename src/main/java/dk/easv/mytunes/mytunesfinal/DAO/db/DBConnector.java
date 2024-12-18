@@ -16,7 +16,7 @@ public class DBConnector {
     private static final String PROP_FILE = "config/config.settings";
     private  SQLServerDataSource dataSource;
 
-    public DBConnector() throws IOException {
+    public DBConnector() throws IOException { //Connects to the database
         Properties databaseProperties = new Properties();
         databaseProperties.load(new FileInputStream(new File(PROP_FILE)));
 
@@ -38,9 +38,9 @@ public class DBConnector {
     public static void main(String[] args) throws Exception {
         DBConnector databaseConnector = new DBConnector();
 
-        try (Connection connection = databaseConnector.getConnection()) {
+        try (Connection connection = databaseConnector.getConnection()) {  //Connection gets closed here
             System.out.println("Is it open? " + !connection.isClosed());
-        } //Connection gets closed here
+        }
     }
 
 

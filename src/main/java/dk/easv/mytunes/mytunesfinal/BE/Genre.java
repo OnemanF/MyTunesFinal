@@ -18,16 +18,8 @@ public class Genre {
         return genreID;
     }
 
-    public void setGenreID(int genreID) {
-        this.genreID = genreID;
-    }
-
     public String getGenreName() {
         return genreName;
-    }
-
-    public void setGenreName(String genreName) {
-        this.genreName = genreName;
     }
 
     @Override
