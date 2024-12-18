@@ -8,6 +8,7 @@ public class Song {
     private String title;
     private String artist;
     private String filePath;
+    private int orderIndex;
 
     // Constructor with ID
     public Song(int id, String title, String artist, String genre, int duration, String filePath) {
@@ -17,11 +18,19 @@ public class Song {
         this.genre = genre != null ? genre : "";
         this.duration = duration;
         this.filePath = filePath != null ? filePath : "";
+
     }
 
     // Constructor without ID
     public Song(String title, String artist, String genre, int duration, String filePath) {
         this(0, title, artist, genre, duration, filePath); // Call the other constructor
+    }
+
+    public int getOrderIndex() {
+        return orderIndex;
+    }
+    public void setOrderIndex(int orderIndex) {
+        this.orderIndex = orderIndex;
     }
 
     // Getters and Setters
@@ -75,7 +84,7 @@ public class Song {
 
     @Override
     public String toString() {
-        return String.format("%d: %s | %s | %d | %s | %s",
-                id, title, genre, duration, artist, filePath);
+        return String.format("%d: %s | %s | %d | %s | %s | Order: %d",
+                id, title, genre, duration, artist, filePath, orderIndex);
     }
 }

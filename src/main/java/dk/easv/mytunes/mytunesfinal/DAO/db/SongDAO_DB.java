@@ -42,6 +42,7 @@ public class SongDAO_DB implements ISongDataAccess {
                 String filePath = rs.getString("FilePath");
 
 
+
                 Song song = new Song( id,  title, artistName, genreName, duration, filePath);
                 allSongs.add(song);
             }

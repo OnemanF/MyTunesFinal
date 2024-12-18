@@ -92,11 +92,11 @@ public class PlaylistDAO_DB implements IPlaylistDataAccess {
                 "INNER JOIN SongsOnPlaylist sop ON s.SongID = sop.SongID " +
                 "WHERE sop.PlaylistID = ?";*/
 
-                "SELECT s.SongID, s.Title, s.Duration, s.FilePath, s.ArtistName, g.GenreName " +
+                "SELECT s.SongID, s.Title, s.Duration, s.FilePath, s.ArtistName, g.GenreName, sop.OrderIndex " +
                         "FROM Song s " +
                         "JOIN SongsOnPlaylist sop ON s.SongID = sop.SongID " +
                         "JOIN Genre g ON s.GenreID = g.GenreID " +
-                        "WHERE sop.PlaylistID = ?";
+                        "WHERE sop.PlaylistID = ? ORDER BY sop.OrderIndex";
 
 
         try (Connection conn = playlistdatabaseConnector.getConnection();
@@ -113,6 +113,7 @@ public class PlaylistDAO_DB implements IPlaylistDataAccess {
                     String genreName = rs.getString("GenreName");
                     int duration = rs.getInt("Duration");
                     String filePath = rs.getString("FilePath");
+
 
                     Song song = new Song(songID, title, artistName, genreName, duration, filePath);
                     songs.add(song);
@@ -257,6 +258,7 @@ public class PlaylistDAO_DB implements IPlaylistDataAccess {
                             rs.getString("GenreID"),
                             rs.getInt("Duration"),
                             rs.getString("FilePath")
+
                     );
                 }
             } catch (Exception e) {
@@ -264,5 +266,29 @@ public class PlaylistDAO_DB implements IPlaylistDataAccess {
             }
             return null; // Return null if no song is found or an error occurs
         }
+
+    public void updateSongOrder(int playlistId, List<Song> songs) throws SQLException {
+        String sql = "UPDATE SongsOnPlaylist SET OrderIndex = ? WHERE PlaylistID = ? AND SongID = ?";
+
+        try (Connection conn = playlistdatabaseConnector.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            conn.setAutoCommit(false); // Disable auto-commit for batch execution
+
+            for (Song song : songs) {
+                pstmt.setInt(1, song.getOrderIndex());
+                pstmt.setInt(2, playlistId);
+                pstmt.setInt(3, song.getId());
+                pstmt.addBatch(); // Add to batch
+            }
+
+            pstmt.executeBatch(); // Execute batch
+            conn.commit(); // Commit the transaction
+        } catch (SQLException e) {
+            // Rollback or handle the exception as needed
+            throw e;
+        }
+    }
+
         }
 
