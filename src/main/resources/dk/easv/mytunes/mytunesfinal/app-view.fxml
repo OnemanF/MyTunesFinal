@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" prefHeight="735.0" prefWidth="930.0" spacing="20.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.mytunes.mytunesfinal.GUI.Controller.MyTunesController">
+<VBox alignment="CENTER" prefHeight="735.0" prefWidth="930.0" spacing="20.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.mytunes.mytunesfinal.GUI.Controller.MyTunesController">
    <padding>
       <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
    </padding>
@@ -25,14 +25,13 @@
                <font>
                   <Font size="13.0" />
                </font></Button>
-            <Slider fx:id="volumeSlider" layoutX="51.0" layoutY="80.0" />
+            <Slider fx:id="volumeSlider" layoutX="50.0" layoutY="80.0" />
             <Label fx:id="crntTrackTxt" layoutX="240.0" layoutY="40.0" text="Current Track:">
                <font>
                   <Font name="Dutch 801 Extra Bold BT" size="15.0" />
                </font></Label>
-            <TextField fx:id="txtSongSearch" layoutX="687.0" layoutY="21.0" prefHeight="26.0" prefWidth="121.0" />
-            <Button layoutX="822.0" layoutY="21.0" mnemonicParsing="false" text="Ɑ͞ ̶͞ ̶͞ ̶͞ لں͞" />
-            <Label layoutX="644.0" layoutY="25.0" text="Filter:" />
+            <TextField fx:id="txtSongSearch" layoutX="746.0" layoutY="20.0" prefHeight="26.0" prefWidth="121.0" />
+            <Label layoutX="705.0" layoutY="24.0" text="Filter:" />
             <TableView fx:id="tblPlaylist" layoutX="20.0" layoutY="148.0" prefHeight="478.0" prefWidth="264.0" style="-fx-background-color: #a3d8f3;">
                <columns>
                   <TableColumn fx:id="colName" prefWidth="108.79999542236328" style="-fx-background-color: #69b9e2;" text="Name" />
@@ -52,24 +51,21 @@
                <font>
                   <Font name="System Bold" size="16.0" />
                </font></Label>
-            <Button layoutX="320.0" layoutY="640.0" mnemonicParsing="false" onAction="#onUp" style="-fx-background-color: #69b9e2;" text="▲" />
-            <Button layoutX="367.0" layoutY="640.0" mnemonicParsing="false" onAction="#onDown" style="-fx-background-color: #69b9e2;" text="▼" />
+            <Button layoutX="320.0" layoutY="640.0" mnemonicParsing="false" style="-fx-background-color: #69b9e2;" text="▲" />
+            <Button layoutX="367.0" layoutY="640.0" mnemonicParsing="false" style="-fx-background-color: #69b9e2;" text="▼" />
             <Button layoutX="121.0" layoutY="34.0" mnemonicParsing="false" onAction="#onStop" prefHeight="27.0" prefWidth="34.0" style="-fx-background-color: #69b9e2;" text="⏸">
                <font>
                   <Font size="13.0" />
                </font></Button>
             <Button layoutX="457.0" layoutY="640.0" mnemonicParsing="false" onAction="#removeSongFromPlaylist" style="-fx-background-color: #69b9e2;" text="Delete" />
-            <Button fx:id="btnAddNewSong" layoutX="578.0" layoutY="640.0" mnemonicParsing="false" onAction="#addSong" prefHeight="26.0" prefWidth="50.0" style="-fx-background-color: #69b9e2;" text="New" />
-            <Button fx:id="btnUpdateSong" layoutX="635.0" layoutY="640.0" mnemonicParsing="false" onAction="#updateSong" prefHeight="26.0" prefWidth="62.0" style="-fx-background-color: #69b9e2;" text="Update" />
-            <Button fx:id="btnDeleteSong" layoutX="705.0" layoutY="640.0" mnemonicParsing="false" onAction="#deleteSong" style="-fx-background-color: #69b9e2;" text="Delete" />
-            <Button layoutX="831.0" layoutY="677.0" mnemonicParsing="false" onAction="#onBtnClose" style="-fx-background-color: #69b9e2;" text="Close" />
+            <Button fx:id="btnAddNewSong" layoutX="565.0" layoutY="639.0" mnemonicParsing="false" onAction="#addSong" prefHeight="26.0" prefWidth="50.0" style="-fx-background-color: #69b9e2;" text="New" />
+            <Button fx:id="btnUpdateSong" layoutX="624.0" layoutY="639.0" mnemonicParsing="false" onAction="#updateSong" prefHeight="26.0" prefWidth="62.0" style="-fx-background-color: #69b9e2;" text="Update" />
+            <Button fx:id="btnDeleteSong" layoutX="694.0" layoutY="639.0" mnemonicParsing="false" onAction="#deleteSong" style="-fx-background-color: #69b9e2;" text="Delete" />
+            <Button layoutX="831.0" layoutY="677.0" mnemonicParsing="false" style="-fx-background-color: #69b9e2;" text="Close" />
             <Button fx:id="btnNewPlaylist" layoutX="25.0" layoutY="639.0" mnemonicParsing="false" onAction="#createNewPlaylist" prefHeight="26.0" prefWidth="50.0" style="-fx-background-color: #69b9e2;" text="New" />
             <Button layoutX="87.0" layoutY="640.0" mnemonicParsing="false" onAction="#editPlaylist" prefHeight="26.0" prefWidth="50.0" style="-fx-background-color: #69b9e2;" text="Edit" />
             <Button fx:id="btnDeletePlaylist" layoutX="152.0" layoutY="640.0" mnemonicParsing="false" onAction="#deletePlaylist" style="-fx-background-color: #69b9e2;" text="Delete" />
-            <Label layoutX="32.0" layoutY="77.0" prefHeight="18.0" prefWidth="14.0" text="🔉">
-               <font>
-                  <Font size="14.0" />
-               </font></Label>
+            <Label layoutX="202.0" layoutY="78.0" text="🕪" />
             <Label layoutX="316.0" layoutY="121.0" text="Songs on playlist">
                <font>
                   <Font name="System Bold" size="16.0" />
@@ -84,7 +80,7 @@
                   <TableColumn fx:id="colSongsArtist" minWidth="0.0" prefWidth="98.39999389648438" style="-fx-background-color: #69b9e2;" text="Artist" />
                </columns>
             </TableView>
-            <Button layoutX="765.0" layoutY="640.0" mnemonicParsing="false" onAction="#addSongToPlaylist" style="-fx-background-color: #69b9e2;" text="AddSongtoplaylist" />
+            <Button layoutX="754.0" layoutY="639.0" mnemonicParsing="false" onAction="#addSongToPlaylist" style="-fx-background-color: #69b9e2;" text="Add to playlist" />
             <ProgressBar fx:id="progressBar" layoutX="241.0" layoutY="71.0" prefHeight="18.0" prefWidth="391.0" progress="0.0" />
             <Label fx:id="progressLbl" layoutX="423.0" layoutY="87.0" text="00:00" />
          </children>
